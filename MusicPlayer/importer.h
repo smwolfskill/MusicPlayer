@@ -25,7 +25,7 @@ public:
      * @param existingLibrary Allocated ptr. to MusicLibrary to add onto.
      * @return true if success; false otherwise.
      */
-    static bool importLibrary(const std::string directoryUrl, MusicLibrary * existingLibrary);
+    static bool importLibrary(const std::string directoryUrl, MusicLibrary * const existingLibrary);
 
 private:
     Importer() {} //don't allow instantiation

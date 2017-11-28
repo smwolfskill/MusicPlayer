@@ -1,5 +1,5 @@
-#ifndef TESTSOMETHING_H
-#define TESTSOMETHING_H
+#ifndef TESTIMPORTER_H
+#define TESTIMPORTER_H
 
 #include <QtTest/QtTest>
 #include "song.h"
@@ -33,4 +33,4 @@ private slots:
 };
 
 
-#endif // TESTSOMETHING_H
+#endif // TESTIMPORTER_H

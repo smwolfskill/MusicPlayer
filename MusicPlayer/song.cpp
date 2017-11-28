@@ -11,6 +11,12 @@ Song::Song(std::string url, std::string name, std::string artist,
     this->year = year;
 }
 
+Song::Song(const std::string representation)
+{
+    nlohmann::json song = nlohmann::json::parse(representation);
+    *this = song;
+}
+
 bool Song::Equals(const Song *const other) const
 {
     if(url.compare(other->url) != 0) {
@@ -34,6 +40,23 @@ bool Song::Equals(const Song *const other) const
     return true;
 }
 
-QString Song::toString() const {
+std::string Song::toString() const
+{
+    nlohmann::json song = *this;
+    return song.dump();
+}
 
+void to_json(nlohmann::json& j, const Song &s) {
+    j = nlohmann::json{{"url", s.url}, {"title", s.title}, {"artist", s.artist}, {"album", s.album},
+             {"genre", s.genre}, {"year", s.year}, {"playCount", s.playCount}};
+}
+
+void from_json(const nlohmann::json &j, Song &s) {
+    s.url = j.at("url").get<std::string>();
+    s.title = j.at("title").get<std::string>();
+    s.artist = j.at("artist").get<std::string>();
+    s.album = j.at("album").get<std::string>();
+    s.genre = j.at("genre").get<std::string>();
+    s.year = j.at("year").get<unsigned int>();
+    s.playCount = j.at("playCount").get<int>();
 }

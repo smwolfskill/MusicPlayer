@@ -15,3 +15,11 @@ void TestSong::testEquals()
     QCOMPARE(b.Equals(&c), false);
     QCOMPARE(c.Equals(&b), false);
 }
+
+void TestSong::testJson()
+{
+    Song a("1", "2", "3", "4", "5", 1995);
+    std::string repr = a.toString();
+    Song copy(repr);
+    QCOMPARE(a.Equals(&copy), true);
+}

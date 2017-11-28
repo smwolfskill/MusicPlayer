@@ -1,5 +1,5 @@
-#ifndef TESTTWO_H
-#define TESTTWO_H
+#ifndef TESTSONG_H
+#define TESTSONG_H
 
 #include <QtTest/QtTest>
 
@@ -23,7 +23,8 @@ private slots:
     void cleanup();*/
 
     void testEquals();
+    void testJson();
 };
 
 
-#endif // TESTTWO_H
+#endif // TESTSONG_H

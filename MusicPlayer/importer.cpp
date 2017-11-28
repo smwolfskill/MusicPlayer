@@ -21,7 +21,7 @@ MusicLibrary * Importer::importLibrary(const string directoryUrl) {
     return lib;
 }
 
-bool Importer::importLibrary(const string directoryUrl, MusicLibrary * existingLibrary) {
+bool Importer::importLibrary(const string directoryUrl, MusicLibrary * const existingLibrary) {
     qInfo(directoryUrl.c_str());
 
     //1. Find all sound files in directoryUrl

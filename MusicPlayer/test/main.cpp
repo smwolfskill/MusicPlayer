@@ -2,6 +2,8 @@
 #include <QApplication>
 #include "testimporter.h"
 #include "testsong.h"
+#include "testplaylist.h"
+#include "testvector.h"
 
 int main(int argc, char** argv) {
     QApplication app(argc, argv);
@@ -17,6 +19,16 @@ int main(int argc, char** argv) {
     if(true) //run Song class tests
        {
           TestSong tc;
+          status |= QTest::qExec(&tc, argc, argv);
+       }
+    if(true) //run Playlist class tests
+       {
+          TestPlaylist tc;
+          status |= QTest::qExec(&tc, argc, argv);
+       }
+    if(true) //run Vector class tests
+       {
+          TestVector tc;
           status |= QTest::qExec(&tc, argc, argv);
        }
     return status;

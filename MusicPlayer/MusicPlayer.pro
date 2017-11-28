@@ -28,12 +28,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         frmmain.cpp \
-    song.cpp \
-    album.cpp \
-    importer.cpp \
-    artist.cpp \
-    musiclibrary.cpp \
-    playlist.cpp \
+        song.cpp \
+        album.cpp \
+        importer.cpp \
+        artist.cpp \
+        musiclibrary.cpp \
+        playlist.cpp \
+        vector.cpp
+
 
 HEADERS += \
         frmmain.h \
@@ -43,6 +45,7 @@ HEADERS += \
     artist.h \
     musiclibrary.h \
     playlist.h \
+    vector.h
 
 
 FORMS += \
@@ -57,16 +60,21 @@ test {
 
     SOURCES += test/main.cpp \
                test/testsong.cpp \
-               test/testimporter.cpp
+               test/testimporter.cpp \
+               test/testplaylist.cpp \
+               test/testvector.cpp
 
     HEADERS += test/testsong.h \
-               test/testimporter.h
+               test/testimporter.h \
+               test/testplaylist.h \
+               test/testvector.h
+
 } else {
     message(Normal build)
 }
 
 INCLUDEPATH += \
-    /usr/local/include/taglib
+    /usr/local/include/taglib \
 
 LIBS += \
     -L/usr/local/lib \

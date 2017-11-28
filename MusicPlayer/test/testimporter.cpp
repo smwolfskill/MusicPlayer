@@ -37,16 +37,16 @@ void TestImporter::testImportLibrary() {
     QVERIFY(testLib != nullptr);
 
     //Test 2: Simple: correctly parsed song in immediate folder
-    Song * parsedImmediate = testLib->getSong(immediate->title);
+    const Song * parsedImmediate = testLib->getSong(immediate->title);
     QVERIFY(parsedImmediate != nullptr);
     QCOMPARE(immediate->Equals(parsedImmediate), true);
 
     //Test 3: Recursive + multi files: correctly parsed 2 songs in subdir
-    Song * parsedSub1 = testLib->getSong(sub1->title);
+    const Song * parsedSub1 = testLib->getSong(sub1->title);
     QVERIFY(parsedSub1 != nullptr);
     QCOMPARE(sub1->Equals(parsedSub1), true);
 
-    Song * parsedSub2 = testLib->getSong(sub2->title);
+    const Song * parsedSub2 = testLib->getSong(sub2->title);
     QVERIFY(parsedSub2 != nullptr);
     QCOMPARE(sub2->Equals(parsedSub2), true);
 
