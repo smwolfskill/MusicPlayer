@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QMediaPlayer>
+#include "engine.h"
 
 namespace Ui {
 class FrmMain;
@@ -14,6 +15,7 @@ class FrmMain : public QMainWindow
 
 public:
     //Vars:
+    Engine * engine;
     QMediaPlayer * player;
 
     //Methods:

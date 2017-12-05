@@ -23,6 +23,7 @@ private slots:
     void cleanup();*/
 
     void testEquals();
+    void testOperatorLessThan(); //test operator< overload
     void testJson();
 };
 

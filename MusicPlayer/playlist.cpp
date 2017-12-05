@@ -1,26 +1,25 @@
 #include "playlist.h"
+#include <QDir>
 
-Playlist::Playlist(const std::string name, const SongVector songs, int length)
+Playlist::Playlist(const std::string name)
 {
     this->name = name;
-    this->length = length;
-    this->songs = songs;
-    selected = songs.begin();
-    selected_index = 0;
+    songs = SongVector(0); //init Songs list
+    selected = 0;
     modified = false;
 }
 
 Playlist::Playlist(const std::string representation, const MusicLibrary * const lib)
 {
     //TODO
-    try
+    /*try
     {
-        /*std::size_t lastChar;
-        int result = std::stoi(str, &lastChar, 10);
-        if(result < 0 || result > 1) {
+        //std::size_t lastChar;
+        //int result = std::stoi(str, &lastChar, 10);
+        //if(result < 0 || result > 1) {
             //load bool
             //corrupted/invalid representation
-        }*/
+        //}
         //TODO: can just load as "true"/"false"; easy.
     }
     catch (std::invalid_argument&)
@@ -30,8 +29,8 @@ Playlist::Playlist(const std::string representation, const MusicLibrary * const 
     catch (std::out_of_range&)
     {
 
-    }
-    selected = songs.begin();
+    }*/
+    selected = 0;
     modified = false;
 }
 
@@ -41,118 +40,77 @@ void Playlist::setName(const std::string newName)
     modified = true;
 }
 
-const Song * Playlist::getSelected() const
+Song * Playlist::getSelected() const
 {
-    if(selected_index < 0) {
+    if(selected < 0 || (std::size_t) selected >= songs.size()) {
         return nullptr; //none selected.
     }
-    return *selected;
+    return songs[selected];
 }
 
-const Song * Playlist::getNext()
+Song * Playlist::getNext(bool returnBeginning)
 {
-    if(selected == songs.end()) { //at end. loop back to beginning.
-        selected = songs.begin();
-        selected_index = 0;
+    if((std::size_t) selected == songs.size()) { //at end. loop back to beginning.
+        selected = 0;
+        if(!returnBeginning) {
+            return nullptr; //don't return beginning if requested. Indicates Playlist finished.
+        }
     } else { //go to next song.
         selected++;
-        selected_index++;
     }
     return getSelected();
 }
 
 void Playlist::goToFirst()
 {
-    selected = songs.begin();
-    selected_index = 0;
+    selected = 0;
 }
 
-bool Playlist::goToSong(const Song * const toGoTo)
+bool Playlist::goToSong(Song * const toGoTo)
 {
-    SongVector::const_iterator * location = (SongVector::const_iterator *) malloc(sizeof(SongVector::const_iterator));
-    int index = findSong(toGoTo, location);
+    int index = songs.find(toGoTo);
     if(index == -1) {
-        free(location);
-        return false; //toGoTo not found.
+        return false; //not found
     }
-    //toGoTo found.
-    selected = *location;
-    selected_index = index;
-    free(location);
+    selected = index;
     return true;
 }
 
-bool Playlist::containsSong(const Song * const song) const
+QMediaPlaylist * Playlist::getRemaining()
 {
-    SongVector::const_iterator * location = (SongVector::const_iterator *) malloc(sizeof(SongVector::const_iterator));
-    if(findSong(song, location) != -1) {
-        free(location);
-        return true;
+    QMediaPlaylist * remaining = new QMediaPlaylist();
+    if(songs.size() == 0) { //no songs in playlist
+        return nullptr;
     }
-    return false;
-}
+    int origSelected = selected;
+    Song * select = getSelected();
+    if(select = nullptr) { //none selected. start at beginning
+        selected = 0;
+        origSelected = 0;
+        select = getSelected();
+    }
+    //Go until end of playlist
+    while(select != nullptr) {
+        remaining->addMedia(QUrl(select->url.c_str()));
+        select = getNext(false); //don't return beginning element
+    }
+    remaining->setCurrentIndex(1); //TODO: determine if 0-based or 1-based index
 
-void Playlist::addSong(const Song * const toAdd)
-{
-    addSongAfter(length - 1, toAdd);
-}
-
-bool Playlist::addSongAfter(int index, const Song * const toAdd)
-{
-    if(index < -1 || index >= length) {
-        return false;
-    }
-    if(index == -1) {
-        songs.push_front(toAdd);
-    } else {
-        SongVector::const_iterator iterAt = getIteratorAt(index);
-        songs.insert_after(iterAt, toAdd);
-    }
-    length++;
-    modified = true;
-    return true;
-}
-
-bool Playlist::removeSongAt(int index)
-{
-    if(index < 0 || index >= length) {
-        return false;
-    }
-    if(length == 1) { //deleted last element
-        songs.pop_front();
-        selected_index = -1;
-    } else {
-        if(index == 0) {
-            if(selected_index == 0) { //selected first. move to new first element.
-                selected++;
-            }
-            songs.pop_front();
-        } else {
-            int iterBeforeIndex = -2;
-            SongVector::const_iterator iterBefore = getIteratorAt(index - 1, &iterBeforeIndex);
-            if(selected_index == iterBeforeIndex + 1) { //selected at index. move to next one.
-                selected++;
-            }
-            songs.erase_after(iterBefore);
-        }
-    }
-    length--;
-    modified = true;
-    return true;
+    //Set selected back to original
+    selected = origSelected;
+    return remaining;
 }
 
 std::string Playlist::toString() const
 {
     /*std::string name; //shall not contain linebreaks.
     bool modified;    //if true, has been modified (songs added/removed) since it was created.
-    int length;       //length of Playlist: # elements in songs.
     int selected_index; //index of current song selected/playing in songs array.
     FwdList::const_iterator selected;
     FwdList songs;  //std::forward_list<const Song*> list of Ptrs. to Songs in Playlist.*/
     /* Format:
        <name>
        <modified: true/false>
-       <length>
        <selected_index>
        {
        <song 1>
@@ -162,39 +120,10 @@ std::string Playlist::toString() const
     using namespace std;
     string repr = name + "\n";
     repr += (modified ? string("true") : string("false")) + "\n";
-    repr += to_string(length) + "\n";
-    repr += to_string(selected_index) + "\n";
+    repr += to_string(selected) + "\n";
     repr += "{\n";
+    //TODO
     //for()
     repr += "}\n";
     return repr;
-}
-
-SongVector::const_iterator Playlist::getIteratorAt(const int &index, int * const iteratorIndex) const
-{
-    SongVector::const_iterator iterator = songs.begin();
-    int count = 0;
-    while(count < index) {
-        iterator++;
-    }
-    if(iteratorIndex != nullptr) {
-        *iteratorIndex = count;
-    }
-    return iterator;
-}
-
-int Playlist::findSong(const Song * const song, SongVector::const_iterator * const location) const
-{
-    //Search through all Songs in songs until find song.
-    SongVector::const_iterator iterator = songs.begin();
-    int index = 0;
-    while(iterator != songs.end()) {
-        if(*iterator == song) { //found song
-            *location = iterator;
-            return index;
-        }
-        index++;
-        iterator++;
-    }
-    return -1;
 }

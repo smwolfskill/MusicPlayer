@@ -19,7 +19,7 @@ private:
     Playlist * song1Playlist;
     Song * song1;
     Song * song2;
-    SongVector withSong;
+    Vector<Song *> withSong;
 
 private slots:
     // functions executed by QtTest before and after test suite
@@ -31,10 +31,6 @@ private slots:
     void cleanup();
 
     void testGoToSong();
-    void testContainsSong();
-    void testAddSong();
-    void testAddSongAfter();
-    void testRemoveSongAt();
 };
 
 #endif // TESTPLAYLIST_H

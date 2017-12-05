@@ -4,6 +4,7 @@
 #
 #-------------------------------------------------
 
+QT       += core
 QT       += core gui
 QT       += multimedia
 QT       += widgets testlib
@@ -34,8 +35,9 @@ SOURCES += \
         artist.cpp \
         musiclibrary.cpp \
         playlist.cpp \
-        vector.cpp
-
+        engine.cpp \
+        metadata.cpp \
+    genre.cpp
 
 HEADERS += \
         frmmain.h \
@@ -45,7 +47,12 @@ HEADERS += \
     artist.h \
     musiclibrary.h \
     playlist.h \
-    vector.h
+    vector.h \
+    engine.h \
+    metadata.h \
+    genre.h \
+    compare.h \
+    cvector.h
 
 
 FORMS += \
@@ -62,12 +69,14 @@ test {
                test/testsong.cpp \
                test/testimporter.cpp \
                test/testplaylist.cpp \
-               test/testvector.cpp
+               test/testvector.cpp \
+               test/testmusiclibrary.cpp
 
     HEADERS += test/testsong.h \
                test/testimporter.h \
                test/testplaylist.h \
-               test/testvector.h
+               test/testvector.h \
+               test/testmusiclibrary.h
 
 } else {
     message(Normal build)

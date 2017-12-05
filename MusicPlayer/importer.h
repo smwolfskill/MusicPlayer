@@ -2,34 +2,50 @@
 #define IMPORTER_H
 
 #include "musiclibrary.h"
+#include "metadata.h"
+#include "vector.h"
+#include <fstream>
+
 
 /**
  * @brief Importer --- non-instantiable class for importing a MusicLibrary from a location on the disk.
  * @author      Scott Wolfskill
  * @created     11/13/2017
- * @last_edit   11/14/2017
+ * @last_edit   12/04/2017
  */
 class Importer
 {
 public:
     /**
-     * @brief Import a new MusicLibrary from a directory (and all subdirs) on the disk.
-     * @param directoryUrl Absolute path of directory to import from.
-     * @return Allocated ptr. to MusicLibrary. Caller must de-allocate.
+     * @brief Parse a file line-by-line and return its contents in order.
+     * @param fileUrl Absolute path of file to read.
+     * @return Pointer to list of strings of fileUrl contents, or nullptr if not found.
      */
-    static MusicLibrary * importLibrary(const std::string directoryUrl);
+    static Vector<std::string> * readLines(const std::string fileUrl);
 
     /**
-     * @brief Import and add to an existing MusicLibrary from a directory (and all subdirs) on the disk.
-     * @param directoryUrl Absolute path of directory to import from.
-     * @param existingLibrary Allocated ptr. to MusicLibrary to add onto.
-     * @return true if success; false otherwise.
+     * @brief Write to a file line-by-line, creating new file if doesn't exist
+     *        and overwriting existing contents.
+     * @param fileUrl Absolute path of file to write to.
+     * @param lines Ptr. to vector list of lines to sequentially write to file.
+     * @param start 0-based index to start at in lines.
+     * @return false if error encountered.
      */
-    static bool importLibrary(const std::string directoryUrl, MusicLibrary * const existingLibrary);
+    static bool saveLines(const std::string fileUrl, const Vector<std::string> * const lines, unsigned start = 0);
+
+    /**
+     * @brief Append to the end of a file line-by-line, not overwriting existing contents.
+     * @param fileUrl Absolute path of file to write to.
+     * @param lines Ptr. to vector list of lines to sequentially write to file.
+     * @param start 0-based index to start at in lines.
+     * @return false if error encountered.
+     */
+    static bool appendLines(const std::string fileUrl, const Vector<std::string> * const lines, unsigned start = 0);
 
 private:
+    //Methods:
     Importer() {} //don't allow instantiation
-
+    static bool saveTo(std::ofstream &openStream, const Vector<std::string> * const lines, unsigned start);
 };
 
 #endif // IMPORTER_H

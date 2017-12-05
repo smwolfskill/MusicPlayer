@@ -8,7 +8,7 @@
  * @brief TestVector --- for testing functionality of Vector class.
  * @author      Scott Wolfskill
  * @created     11/28/2017
- * @last_edit   11/28/2017
+ * @last_edit   12/04/2017
  */
 class TestVector : public QObject
 {
@@ -29,10 +29,11 @@ private slots:
     void init();
     void cleanup();
 
-    //TODO: fix strange error
-    /*void testContains();
-    void testInsertAfter();
-    void testRemoveAt();*/
+    void testContains();
+    void testFind();
+    void testInsertBefore();
+    void testRemoveAt();
+    void testSort();
 };
 
 #endif // TESTVECTOR_H

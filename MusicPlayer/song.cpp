@@ -40,6 +40,14 @@ bool Song::Equals(const Song *const other) const
     return true;
 }
 
+bool Song::operator <(const Song &other) const
+{
+    if(strcmp(title.c_str(), other.title.c_str()) < 0) {
+        return true;
+    }
+    return false;
+}
+
 std::string Song::toString() const
 {
     nlohmann::json song = *this;

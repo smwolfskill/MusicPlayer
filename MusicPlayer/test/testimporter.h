@@ -16,20 +16,19 @@ class TestImporter : public QObject
 
 private:
     std::string testFolder;
-    Song * immediate; //song in immediate test Resources folder
-    Song * sub1; //one song in Resources subdir
-    Song * sub2; //2nd song ...
 
 private slots:
     // functions executed by QtTest before and after test suite
     void initTestCase();
-    void cleanupTestCase();
+    //void cleanupTestCase();
 
     // functions executed by QtTest before and after each test
     /*void init();
     void cleanup();*/
 
-    void testImportLibrary();
+    void testReadLines();
+    void testSaveLines();
+    void testAppendLines();
 };
 
 

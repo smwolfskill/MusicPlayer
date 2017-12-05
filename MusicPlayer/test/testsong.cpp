@@ -16,6 +16,21 @@ void TestSong::testEquals()
     QCOMPARE(c.Equals(&b), false);
 }
 
+void TestSong::testOperatorLessThan()
+{
+    Song a("1", "a", "3", "4", "5", 1995);
+    Song b("1", "az", "3", "4", "5", 1995);
+    Song c("1", "a", "0", "4", "5", 1995);
+
+    //Test 1: a < b
+    QCOMPARE(a < b, true); //a.title is before b.title
+    QCOMPARE(b < a, false); //check reflexive
+
+    //Test 2: equality => false
+    QCOMPARE(a < c, false); //return false for equality
+    QCOMPARE(c < a, false); //reflexive
+}
+
 void TestSong::testJson()
 {
     Song a("1", "2", "3", "4", "5", 1995);
