@@ -61,6 +61,9 @@ public:
      * @brief Play currently selected song in session playlist playlists[0].
      * @return false if none selected or currently selected Song unable to be played.
      */
+
+    //TODO: add method to play a single song, which sets the session playlist to that and calls playSelected().
+
     bool playSelected();
     bool resumePlaying();
     void pausePlaying();

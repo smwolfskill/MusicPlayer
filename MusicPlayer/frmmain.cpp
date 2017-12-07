@@ -10,19 +10,28 @@ FrmMain::FrmMain(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    player = new QMediaPlayer;
     engine = new Engine(); //use default metadata path
     engine->loadAll(); //load metadata, then libraries it links to
+    //Show library song contents
+    qInfo("Library contents:");
     for(unsigned i = 0; i < engine->library->songs.size(); i++) {
         qInfo(engine->library->songs[i]->toString().c_str());
     }
+    qInfo("======");
+    //Temp: make session playlist 1st song in library
+    Playlist * sessionPlaylist = engine->playlists[0];
+    sessionPlaylist->songs.push_back(engine->library->songs[0]);
+    qInfo("Session playlist:");
+    for(unsigned i = 0; i < sessionPlaylist->songs.size(); i++) {
+        qInfo(sessionPlaylist->songs[i]->toString().c_str());
+    }
+    qInfo("======");
 }
 
 FrmMain::~FrmMain()
 {
     delete ui;
     delete engine;
-    delete player;
     //qInfo("cleaned up frmMain.");
 }
 
@@ -32,21 +41,12 @@ bool FrmMain::testReturn() {
 
 void FrmMain::on_btnPlay_clicked()
 {
-    using namespace std;
-    /*QString path = "/home/scott/Desktop/ScotWolfskillPC/Music/1 - Hoist The Colours.mp3";
-    player->setMedia(QUrl::fromLocalFile(path));
-    player->setVolume(50);
-    player->play();
-    qInfo("started playing file");*/
-
-    //const char * path = "/home/scott/Desktop/ScotWolfskillPC/Music/1 - Hoist The Colours.mp3";
-    /*const std::string path = "/home/scott/Desktop/ScotWolfskillPC/Music/Evoken";
-    MusicLibrary * lib = Importer::importLibrary(path);
-    delete lib;*/
+    if(!engine->playSelected()) {
+        qWarning("Failed to play selected!");
+    }
 }
 
 void FrmMain::on_btnStop_clicked()
 {
-    player->stop();
-    qInfo("stopped playing file");
+    engine->stopPlaying();
 }

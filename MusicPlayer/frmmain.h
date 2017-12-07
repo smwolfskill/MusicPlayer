@@ -2,7 +2,6 @@
 #define FRMMAIN_H
 
 #include <QMainWindow>
-#include <QMediaPlayer>
 #include "engine.h"
 
 namespace Ui {
@@ -16,7 +15,6 @@ class FrmMain : public QMainWindow
 public:
     //Vars:
     Engine * engine;
-    QMediaPlayer * player;
 
     //Methods:
     explicit FrmMain(QWidget *parent = 0);

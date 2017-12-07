@@ -44,6 +44,7 @@ bool MusicLibrary::addToLibrary(const std::string directoryUrl)
     struct dirent * curEntry;
     errno = 0;
 
+    try {
     while(curEntry = readdir(dir)){ //read all links in dir
         if(strcmp(curEntry->d_name, ".") != 0 && strcmp(curEntry->d_name, "..") != 0) {
             //Actual file in directoryUrl
@@ -74,9 +75,18 @@ bool MusicLibrary::addToLibrary(const std::string directoryUrl)
 
         }
     }
-    closedir(dir);
+    } catch (exception &e) {
+        qWarning(e.what());
+        return false;
+    }
     if(errno != 0) {
         qErrnoWarning(errno, "importLibrary: reading dir failed!");
+        return false; //failure
+    }
+    errno = 0;
+    closedir(dir);
+    if(errno != 0) {
+        qErrnoWarning(errno, "importLibrary: close dir failed.");
         return false; //failure
     }
     /*TagLib::MPEG::File audioFile(url);
@@ -85,6 +95,7 @@ bool MusicLibrary::addToLibrary(const std::string directoryUrl)
 }
 
 void MusicLibrary::addSong(Song * newSong) {
+    //TODO: Check if have exact match for newSong in library already to avoid duplicates
     //1. Fill in blank info and push to songs vector.
     if(newSong->title == "") {
         newSong->title = UNKNOWN_TITLE;
@@ -121,7 +132,7 @@ void MusicLibrary::addSong(Song * newSong) {
             album = artist->albums[0]; //artist's "Single" album
             newSong->album = album->name;
         } else {
-            album = new Album(newSong->album);
+            album = new Album(newSong->album, newSong->year);
             albums.push_back(album);
         }
     } else {
@@ -130,10 +141,10 @@ void MusicLibrary::addSong(Song * newSong) {
 
     //2.3 Check if genre exists in lib
     if(genreIndex == -1) { //not found
-        genre = new Genre(newSong->artist);
+        genre = new Genre(newSong->genre);
         genres.push_back(genre);
     } else {
-        artist = artists[artistIndex];
+        genre = genres[genreIndex];
     }
 
     //3. Link the pieces together
