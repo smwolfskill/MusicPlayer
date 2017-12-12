@@ -187,7 +187,8 @@ void FrmMain::showSongs(const SongVector &songs)
 void FrmMain::on_media_play()
 {
     //Play button is equivalent to context menu "Play All"
-    ctxAction_playAll();
+    //ctxAction_playAll();
+    ctxAction_playOnce(); //TEMP playOnce
 }
 
 void FrmMain::on_media_stop()
@@ -461,12 +462,12 @@ void FrmMain::ctxAction_playLast()
 
 void FrmMain::ctxAction_playAll()
 {
-    qint64 songLength = engine->playSelected();
+    /*qint64 songLength = engine->playSelected();
     if(songLength == -1L) {
         qWarning("Failed to play selected!");
     }
 
-    setState_playing();
+    setState_playing();*/
 }
 
 void FrmMain::ctxAction_addToPlaylist()
