@@ -40,9 +40,9 @@ public:
      * @brief Import and add (append) to this MusicLibrary from a directory recursively on the disk.
      * @param directoryUrl Absolute path of directory to import from.
      * @param existingLibrary Allocated ptr. to MusicLibrary to add onto.
-     * @return false if directoryUrl doesn't exist or is not a directory.
+     * @return "" if success; else error message.
      */
-    bool addToLibrary(const std::string directoryUrl);
+    std::string addToLibrary(const std::string directoryUrl);
 
     /**
      * @brief Add a Song to the library.

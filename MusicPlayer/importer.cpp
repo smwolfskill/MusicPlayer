@@ -6,7 +6,7 @@
 
 using namespace std;
 
-Vector<std::string> * Importer::readLines(const string fileUrl)
+StringVector * Importer::readLines(const string fileUrl)
 {
     FILE * file = fopen(fileUrl.c_str(), "r");
     if(file == nullptr) {

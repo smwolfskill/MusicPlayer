@@ -33,65 +33,66 @@ MusicLibrary::~MusicLibrary() {
     songs.clear();
 }
 
-bool MusicLibrary::addToLibrary(const std::string directoryUrl)
+std::string MusicLibrary::addToLibrary(const std::string directoryUrl)
 {
     using namespace std;
+    string msg = "Could not load library from '" + directoryUrl; //will append error and return if encountered
     //1. Find all sound files in directoryUrl
     DIR * dir = opendir(directoryUrl.c_str());
     if(dir == nullptr) {
-        return false;
+        return msg + "': does not exist.";
     }
     struct dirent * curEntry;
     errno = 0;
 
     try {
-    while(curEntry = readdir(dir)){ //read all links in dir
-        if(strcmp(curEntry->d_name, ".") != 0 && strcmp(curEntry->d_name, "..") != 0) {
-            //Actual file in directoryUrl
-            //qInfo(curEntry->d_name);
-            string curEntryPath = directoryUrl + "/" + curEntry->d_name;
-            switch(curEntry->d_type) {
-            case DT_DIR: //Recursively add to library from this subdirectory.
-                addToLibrary(curEntryPath);
-                break;
-            case DT_REG: {
-                TagLib::MPEG::File curFile(curEntryPath.c_str());
-                if(curFile.hasAPETag() || curFile.hasID3v1Tag() || curFile.hasID3v2Tag()) {
-                    TagLib::Tag * tag = curFile.tag();
-                    //qInfo(tag->artist().toCString());
-                    //qInfo(tag->album().toCString());
-                    //qInfo(tag->genre().toCString()); //char* form
-                    //qInfo(tag->genre().to8Bit().c_str()); //std::string -> char* form (if string is useful)
-                    Song * song = new Song(curEntryPath, tag->title().to8Bit(), tag->artist().to8Bit(),
-                                           tag->album().to8Bit(), tag->genre().to8Bit(), tag->year());
-                    addSong(song);
+        while(curEntry = readdir(dir)){ //read all links in dir
+            if(strcmp(curEntry->d_name, ".") != 0 && strcmp(curEntry->d_name, "..") != 0) {
+                //Actual file in directoryUrl
+                //qInfo(curEntry->d_name);
+                string curEntryPath = directoryUrl + "/" + curEntry->d_name;
+                switch(curEntry->d_type) {
+                case DT_DIR: //Recursively add to library from this subdirectory.
+                    addToLibrary(curEntryPath);
+                    break;
+                case DT_REG: {
+                    TagLib::MPEG::File curFile(curEntryPath.c_str());
+                    if(curFile.hasAPETag() || curFile.hasID3v1Tag() || curFile.hasID3v2Tag()) {
+                        TagLib::Tag * tag = curFile.tag();
+                        //qInfo(tag->artist().toCString());
+                        //qInfo(tag->album().toCString());
+                        //qInfo(tag->genre().toCString()); //char* form
+                        //qInfo(tag->genre().to8Bit().c_str()); //std::string -> char* form (if string is useful)
+                        Song * song = new Song(curEntryPath, tag->title().to8Bit(), tag->artist().to8Bit(),
+                                               tag->album().to8Bit(), tag->genre().to8Bit(), tag->track(), tag->year());
+                        addSong(song);
+                    }
+                    break;
                 }
-                break;
-            }
-            case DT_UNKNOWN:
-                qWarning("importLibrary: Unknown file type encountered!");
-                break;
-            }
+                case DT_UNKNOWN:
+                    qWarning("importLibrary: Unknown file type encountered!");
+                    break;
+                }
 
+            }
         }
-    }
     } catch (exception &e) {
         qWarning(e.what());
-        return false;
+        return msg + "': exception encountered (" + string(e.what()) + ")";
     }
     if(errno != 0) {
         qErrnoWarning(errno, "importLibrary: reading dir failed!");
-        return false; //failure
+        return msg + "': reading failed."; //failure
     }
     errno = 0;
     closedir(dir);
     if(errno != 0) {
         qErrnoWarning(errno, "importLibrary: close dir failed.");
-        return false; //failure
+        return msg + "': closing directory failed."; //failure
     }
     /*TagLib::MPEG::File audioFile(url);
     TagLib::ID3v2::Tag *tag = audioFile.ID3v2Tag(true);*/
-    return true; //success
+    return ""; //success
 }
 
 void MusicLibrary::addSong(Song * newSong) {

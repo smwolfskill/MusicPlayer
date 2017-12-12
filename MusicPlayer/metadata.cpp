@@ -13,6 +13,11 @@ Metadata::Metadata(const std::string directory, const std::string libPaths_filen
     }
 }
 
+Metadata::~Metadata()
+{
+    delete libraryPaths;
+}
+
 int Metadata::importFrom(const std::string directory, const std::string libPaths_filename)
 {
     //1. Check if directory exists.
@@ -24,7 +29,7 @@ int Metadata::importFrom(const std::string directory, const std::string libPaths
 
     //2. Import libraryPaths metadata
     const std::string libPathsFilename = directory + "/" + libPaths_filename;
-    Vector<std::string> * lines = Importer::readLines(libPathsFilename);
+    StringVector * lines = Importer::readLines(libPathsFilename);
     if(lines == nullptr) { //failure: file doesn't exist
         return 0;
     }

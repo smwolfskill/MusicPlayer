@@ -37,7 +37,9 @@ SOURCES += \
         playlist.cpp \
         engine.cpp \
         metadata.cpp \
-    genre.cpp
+    genre.cpp \
+    songmenu.cpp \
+    playlistmenu.cpp
 
 HEADERS += \
         frmmain.h \
@@ -52,7 +54,10 @@ HEADERS += \
     metadata.h \
     genre.h \
     compare.h \
-    cvector.h
+    cvector.h \
+    songmenu.h \
+    playlistmenu.h \
+    playlistitemmenu.h
 
 
 FORMS += \
@@ -89,3 +94,6 @@ LIBS += \
     -L/usr/local/lib \
     -ltag \
     -lz
+
+RESOURCES += \
+    resourcelist.qrc

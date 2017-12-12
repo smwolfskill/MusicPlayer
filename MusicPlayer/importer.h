@@ -11,7 +11,7 @@
  * @brief Importer --- non-instantiable class for importing a MusicLibrary from a location on the disk.
  * @author      Scott Wolfskill
  * @created     11/13/2017
- * @last_edit   12/04/2017
+ * @last_edit   12/10/2017
  */
 class Importer
 {
@@ -21,7 +21,7 @@ public:
      * @param fileUrl Absolute path of file to read.
      * @return Pointer to list of strings of fileUrl contents, or nullptr if not found.
      */
-    static Vector<std::string> * readLines(const std::string fileUrl);
+    static StringVector * readLines(const std::string fileUrl);
 
     /**
      * @brief Write to a file line-by-line, creating new file if doesn't exist

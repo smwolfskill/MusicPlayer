@@ -9,7 +9,7 @@
  * @brief Song --- represents a Song in the music library.
  * @author      Scott Wolfskill
  * @created     11/13/2017
- * @last_edit   12/05/2017
+ * @last_edit   12/11/2017
  */
 class Song
 {
@@ -32,13 +32,14 @@ public:
     std::string artist;
     std::string album;
     std::string genre;
+    unsigned trackNum; //track number/order in album
     unsigned year;  //year released
     int playCount;
 
     //Methods:
     Song() {}
     Song(std::string url, std::string title, std::string artist,
-         std::string album, std::string genre, unsigned int year);
+         std::string album, std::string genre, unsigned int trackNum, unsigned int year);
     /**
      * @brief Create a Song from its string representation.
      * @param representation JSON string representation.

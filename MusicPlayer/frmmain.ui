@@ -6,49 +6,501 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>587</width>
+    <height>455</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>frmMain</string>
+   <string>Scott's Music Player</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QPushButton" name="btnPlay">
-    <property name="geometry">
-     <rect>
-      <x>70</x>
-      <y>130</y>
-      <width>89</width>
-      <height>25</height>
-     </rect>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <layout class="QVBoxLayout" name="vlFrmMain">
+    <property name="leftMargin">
+     <number>0</number>
     </property>
-    <property name="text">
-     <string>Play</string>
+    <property name="topMargin">
+     <number>0</number>
     </property>
-   </widget>
-   <widget class="QPushButton" name="btnStop">
-    <property name="geometry">
-     <rect>
-      <x>230</x>
-      <y>130</y>
-      <width>89</width>
-      <height>25</height>
-     </rect>
+    <property name="rightMargin">
+     <number>0</number>
     </property>
-    <property name="text">
-     <string>Stop</string>
+    <property name="bottomMargin">
+     <number>0</number>
     </property>
-   </widget>
+    <item>
+     <layout class="QHBoxLayout" name="hlPlayback">
+      <property name="leftMargin">
+       <number>9</number>
+      </property>
+      <property name="topMargin">
+       <number>9</number>
+      </property>
+      <property name="rightMargin">
+       <number>9</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="lblPlaybackTime">
+        <property name="text">
+         <string>0:00/0:00</string>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::AutoText</enum>
+        </property>
+        <property name="textInteractionFlags">
+         <set>Qt::NoTextInteraction</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSlider" name="sliPlayback">
+        <property name="tracking">
+         <bool>true</bool>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="tickPosition">
+         <enum>QSlider::TicksAbove</enum>
+        </property>
+        <property name="tickInterval">
+         <number>25</number>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="hlNowPlaying">
+      <property name="leftMargin">
+       <number>9</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>9</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="lblPlaybackStatus">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>20</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>&lt;font size=&quot;2&quot;&gt;Selected&lt;/font&gt;</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="lblNowPlaying">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>&lt;i&gt;&lt;b&gt;Never Gonna Catch Tomorrow&lt;/b&gt;&lt;/i&gt; by &lt;i&gt;Lostprophets&lt;/i&gt; in &lt;i&gt;qAlbum1234456789&lt;/i&gt;</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QSlider" name="sliVolume">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="toolTip">
+       <string>Volume (50)</string>
+      </property>
+      <property name="maximum">
+       <number>100</number>
+      </property>
+      <property name="value">
+       <number>50</number>
+      </property>
+      <property name="sliderPosition">
+       <number>50</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="Line" name="line">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="hlMenuDesc">
+      <property name="leftMargin">
+       <number>9</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>9</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="lblCurrentPlaylist">
+        <property name="text">
+         <string>Now Playing</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="hlMenus">
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QListWidget" name="lstCategories">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>100</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+          <weight>50</weight>
+          <italic>false</italic>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QListView {
+    //alternate-background-color: yellow;
+    show-decoration-selected: 1; /* make the selection span the entire width of the view */
+}</string>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Sunken</enum>
+        </property>
+        <property name="horizontalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOff</enum>
+        </property>
+        <property name="autoScroll">
+         <bool>true</bool>
+        </property>
+        <property name="editTriggers">
+         <set>QAbstractItemView::NoEditTriggers</set>
+        </property>
+        <property name="alternatingRowColors">
+         <bool>true</bool>
+        </property>
+        <property name="layoutMode">
+         <enum>QListView::SinglePass</enum>
+        </property>
+        <property name="spacing">
+         <number>4</number>
+        </property>
+        <property name="viewMode">
+         <enum>QListView::ListMode</enum>
+        </property>
+        <property name="currentRow">
+         <number>-1</number>
+        </property>
+        <property name="sortingEnabled">
+         <bool>false</bool>
+        </property>
+        <item>
+         <property name="text">
+          <string>Playlists</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Artists</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Albums</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Genres</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Songs</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QListWidget" name="lstCategoryMembers">
+        <property name="contextMenuPolicy">
+         <enum>Qt::CustomContextMenu</enum>
+        </property>
+        <property name="autoFillBackground">
+         <bool>false</bool>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="horizontalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOff</enum>
+        </property>
+        <property name="sizeAdjustPolicy">
+         <enum>QAbstractScrollArea::AdjustIgnored</enum>
+        </property>
+        <property name="editTriggers">
+         <set>QAbstractItemView::NoEditTriggers</set>
+        </property>
+        <property name="alternatingRowColors">
+         <bool>false</bool>
+        </property>
+        <property name="resizeMode">
+         <enum>QListView::Adjust</enum>
+        </property>
+        <property name="layoutMode">
+         <enum>QListView::SinglePass</enum>
+        </property>
+        <property name="spacing">
+         <number>10</number>
+        </property>
+        <property name="viewMode">
+         <enum>QListView::IconMode</enum>
+        </property>
+        <property name="uniformItemSizes">
+         <bool>false</bool>
+        </property>
+        <property name="currentRow">
+         <number>-1</number>
+        </property>
+        <item>
+         <property name="text">
+          <string>Item1</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Item2</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Item3</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Item4</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Item5</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Item6</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QListWidget" name="lstCurrentPlaylist">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>100</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="contextMenuPolicy">
+         <enum>Qt::CustomContextMenu</enum>
+        </property>
+        <property name="editTriggers">
+         <set>QAbstractItemView::NoEditTriggers</set>
+        </property>
+        <property name="alternatingRowColors">
+         <bool>false</bool>
+        </property>
+        <property name="spacing">
+         <number>4</number>
+        </property>
+        <item>
+         <property name="text">
+          <string>1. Song1</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>2. Song2</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>3. Song3</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QTableWidget" name="tblSongs">
+      <property name="contextMenuPolicy">
+       <enum>Qt::CustomContextMenu</enum>
+      </property>
+      <property name="editTriggers">
+       <set>QAbstractItemView::NoEditTriggers</set>
+      </property>
+      <property name="alternatingRowColors">
+       <bool>true</bool>
+      </property>
+      <property name="selectionBehavior">
+       <enum>QAbstractItemView::SelectRows</enum>
+      </property>
+      <property name="gridStyle">
+       <enum>Qt::NoPen</enum>
+      </property>
+      <property name="cornerButtonEnabled">
+       <bool>false</bool>
+      </property>
+      <attribute name="horizontalHeaderCascadingSectionResizes">
+       <bool>true</bool>
+      </attribute>
+      <attribute name="horizontalHeaderDefaultSectionSize">
+       <number>100</number>
+      </attribute>
+      <attribute name="horizontalHeaderMinimumSectionSize">
+       <number>40</number>
+      </attribute>
+      <attribute name="horizontalHeaderStretchLastSection">
+       <bool>true</bool>
+      </attribute>
+      <attribute name="verticalHeaderCascadingSectionResizes">
+       <bool>true</bool>
+      </attribute>
+      <attribute name="verticalHeaderHighlightSections">
+       <bool>false</bool>
+      </attribute>
+      <attribute name="verticalHeaderStretchLastSection">
+       <bool>false</bool>
+      </attribute>
+      <row>
+       <property name="text">
+        <string>1</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>2</string>
+       </property>
+      </row>
+      <column>
+       <property name="text">
+        <string>Title</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Artist</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Album</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>#</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Year</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Genre</string>
+       </property>
+      </column>
+      <item row="0" column="0">
+       <property name="text">
+        <string>Longlonglonglonglongname</string>
+       </property>
+      </item>
+      <item row="0" column="3">
+       <property name="text">
+        <string/>
+       </property>
+      </item>
+     </widget>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>400</width>
+     <width>587</width>
      <height>22</height>
     </rect>
+   </property>
+   <property name="defaultUp">
+    <bool>true</bool>
+   </property>
+   <property name="nativeMenuBar">
+    <bool>false</bool>
    </property>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
@@ -58,10 +510,111 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionRewind"/>
+   <addaction name="actionPlay"/>
+   <addaction name="actionPause"/>
+   <addaction name="actionStop"/>
+   <addaction name="actionSkip"/>
+   <addaction name="separator"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionPlay">
+   <property name="icon">
+    <iconset>
+     <normalon>:/images/resources/play.png</normalon>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>Play</string>
+   </property>
+   <property name="iconText">
+    <string>Play</string>
+   </property>
+   <property name="toolTip">
+    <string>Play</string>
+   </property>
+  </action>
+  <action name="actionStop">
+   <property name="icon">
+    <iconset>
+     <normalon>:/images/resources/stop.png</normalon>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>Stop</string>
+   </property>
+   <property name="toolTip">
+    <string>Stop</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionPause">
+   <property name="icon">
+    <iconset>
+     <normalon>:/images/resources/pause.png</normalon>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>Pause</string>
+   </property>
+   <property name="toolTip">
+    <string>Pause</string>
+   </property>
+  </action>
+  <action name="actionSkip">
+   <property name="icon">
+    <iconset>
+     <normalon>:/images/resources/skip.png</normalon>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>Skip</string>
+   </property>
+   <property name="toolTip">
+    <string>Skip</string>
+   </property>
+  </action>
+  <action name="actionRewind">
+   <property name="icon">
+    <iconset>
+     <normalon>:/images/resources/rewind.png</normalon>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>Rewind</string>
+   </property>
+   <property name="toolTip">
+    <string>Rewind</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>mainToolBar</sender>
+   <signal>orientationChanged(Qt::Orientation)</signal>
+   <receiver>sliVolume</receiver>
+   <slot>setOrientation(Qt::Orientation)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>199</x>
+     <y>41</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>154</x>
+     <y>248</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <signal>media_play()</signal>
+  <signal>media_pause(bool)</signal>
+  <signal>media_stop()</signal>
+  <signal>media_skip()</signal>
+  <signal>media_rewind()</signal>
+ </slots>
 </ui>

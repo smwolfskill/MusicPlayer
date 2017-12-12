@@ -2,12 +2,13 @@
 #include <string>
 
 Song::Song(std::string url, std::string name, std::string artist,
-                       std::string album, std::string genre, unsigned int year) {
+                       std::string album, std::string genre, unsigned int trackNum, unsigned int year) {
     this->url = url;
     this->title = name;
     this->artist = artist;
     this->album = album;
     this->genre = genre;
+    this->trackNum = trackNum;
     this->year = year;
 }
 
@@ -34,6 +35,9 @@ bool Song::Equals(const Song *const other) const
     if(genre.compare(other->genre) != 0) {
         return false;
     }
+    if(trackNum != other->trackNum) {
+        return false;
+    }
     if(year != other->year) {
         return false;
     }
@@ -56,7 +60,7 @@ std::string Song::toString() const
 
 void to_json(nlohmann::json& j, const Song &s) {
     j = nlohmann::json{{"url", s.url}, {"title", s.title}, {"artist", s.artist}, {"album", s.album},
-             {"genre", s.genre}, {"year", s.year}, {"playCount", s.playCount}};
+             {"genre", s.genre}, {"trackNum", s.trackNum}, {"year", s.year}, {"playCount", s.playCount}};
 }
 
 void from_json(const nlohmann::json &j, Song &s) {
@@ -65,6 +69,7 @@ void from_json(const nlohmann::json &j, Song &s) {
     s.artist = j.at("artist").get<std::string>();
     s.album = j.at("album").get<std::string>();
     s.genre = j.at("genre").get<std::string>();
+    s.trackNum = j.at("trackNum").get<unsigned int>();
     s.year = j.at("year").get<unsigned int>();
     s.playCount = j.at("playCount").get<int>();
 }

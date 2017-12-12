@@ -9,16 +9,17 @@
  *                     such as paths of music libraries to laod.
  * @author      Scott Wolfskill
  * @created     12/04/2017
- * @last_edit   12/04/2017
+ * @last_edit   12/10/2017
  */
 class Metadata
 {
+#define StringVector Vector<std::string>
 public:
     //Vars:
     static const std::string LIBRARY_PATHS_FILENAME; //default name of file holding library paths to load
 
     //Format: 1st element is name of file in metadata folder to save/load from. The rest is data.
-    Vector<std::string> * libraryPaths; //["filename", "libraryPath1", ...]
+    StringVector * libraryPaths; //["filename", "libraryPath1", ...]
 
     //Methods:
     /**
@@ -33,6 +34,8 @@ public:
      * @param libPaths_filename Name of file containing absolute library paths to load separated by newline.
      */
     Metadata(const std::string directory, const std::string libPaths_filename);
+
+    ~Metadata();
 
     bool saveMetadata() { return saveMetadata(dir); }
 

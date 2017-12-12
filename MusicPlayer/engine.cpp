@@ -1,11 +1,37 @@
 #include "engine.h"
 #include <QDir>
 #include <QMediaPlaylist>
+#include <stdlib.h>
 
 const std::string Engine::EXEC_PATH = QDir::currentPath().toStdString();
 
 
-Engine::Engine()
+std::string Engine::msToHMS(qint64 milliseconds)
+{
+    using namespace std;
+    lldiv_t minsAndSecs = lldiv(milliseconds / 1000, 60L);
+    qint64 seconds  = minsAndSecs.rem;
+    lldiv_t hoursAndMins = lldiv(minsAndSecs.quot, 60);
+    qint64 minutes  = hoursAndMins.rem;
+    qint64 hours = hoursAndMins.quot;
+
+    //Convert to string: "(H:)MM:SS" format
+    string HMS = "";
+    if(hours > 0) {
+        HMS += to_string(hours) + ":";
+    }
+    if(minutes < 10) {
+        HMS += "0";
+    }
+    HMS += to_string(minutes) + ":";
+    if(seconds < 10) {
+        HMS += "0";
+    }
+    HMS += to_string(seconds);
+    return HMS;
+}
+
+Engine::Engine(const QObject * signalReceiver, const char * durationChangedSlot, const char * positionChangedSlot)
 {
     playlists = PlaylistVector(0);
     Playlist * sessionPlaylist = new Playlist("Now Playing"); //empty session playlist
@@ -14,13 +40,20 @@ Engine::Engine()
     player = new QMediaPlayer;
     metadata = nullptr;
     library = nullptr;
+    loadedLibs = StringVector(0);
+
+    //TESTING:
+    QObject::connect(player, SIGNAL(durationChanged(qint64)), signalReceiver, durationChangedSlot);
+    QObject::connect(player, SIGNAL(positionChanged(qint64)), signalReceiver, positionChangedSlot);
 }
 
 Engine::Engine(std::string metadata_path) {
+    //TODO: load playlists, incl. session playlist
     this->metadata_path = metadata_path;
     player = new QMediaPlayer;
     metadata = nullptr;
     library = nullptr;
+    loadedLibs = StringVector(0);
 }
 
 Engine::~Engine() {
@@ -31,16 +64,17 @@ Engine::~Engine() {
     delete library;
 }
 
-bool Engine::loadAll() {
+StringVector * Engine::loadAll() {
     if(!loadMetadata()) {
-        return false; //no metadata exists, so nothing to load.
+        return nullptr; //no metadata exists, so nothing to load.
     }
     //1. Load all libraries specified in metadata libraryPaths.
+    StringVector * messages = new StringVector(0);
     for(unsigned i = 1; i < metadata->libraryPaths->size(); i++) { //start after beginning ["filename", ..]
-        loadLibrary((*metadata->libraryPaths)[i]);
+        messages->push_back( loadLibrary((*metadata->libraryPaths)[i]) );
     }
     //lib->sortLibrary(); //sort updated library
-    return true;
+    return messages;
 }
 
 bool Engine::loadMetadata()
@@ -57,38 +91,41 @@ bool Engine::saveMetadata()
     return metadata->saveMetadata();
 }
 
-bool Engine::addLibrary(const std::string directoryUrl)
+std::string Engine::addLibrary(const std::string directoryUrl)
 {
     //1. Check if need to load metadata
     if(metadata == nullptr) {
         loadMetadata();
     }
 
-    //2. Check if already loaded this library
-    if(metadata->libraryPaths->contains(directoryUrl)) {
-        return false; //already loaded
-    }
+    //2. Check if this library already in metadata (and implies already loaded)
+    //nvm, allow user to have duplicate libraries in metadata. Will be skipped.
+    /*if(metadata->libraryPaths->contains(directoryUrl)) {
+        std::string msg = "Library '" + directoryUrl + "' already added to list.";
+        qInfo(msg);
+        return msg;
+    }*/
 
     //3. Load library at directoryUrl
     metadata->libraryPaths->push_back(directoryUrl); //add to libraryPaths metadata
-    if(!loadLibrary(directoryUrl)) {
-        std::string warning = "Could not load library from '" + directoryUrl + "': does not exist.";
-        qWarning(warning.c_str());
-        return false;
-    }
+    std::string result = loadLibrary(directoryUrl);
 
-    //4. Sort updated library
+    //4. Sort updated library: TODO
     //lib->sortLibrary();
-    return true;
+    return result;
 }
 
-bool Engine::loadLibrary(const std::string directoryUrl)
+std::string Engine::loadLibrary(const std::string directoryUrl)
 {
-    //add library at directoryUrl to current library.
-    //add directoryUrl to metadata list of libs we've imported from.
     if(library == nullptr) {
         library = new MusicLibrary();
     }
+    if(loadedLibs.contains(directoryUrl)) { //already loaded
+        std::string msg = "Skipping duplicate library '" + directoryUrl + "'";
+        qInfo(msg.c_str());
+        return msg;
+    }
+    loadedLibs.push_back(directoryUrl);
     return library->addToLibrary(directoryUrl);
 }
 
@@ -96,6 +133,32 @@ void Engine::setVolume(int newVolume)
 {
     //TODO: Make sure UI scale slider is logarithmic.
     player->setVolume(newVolume);
+}
+
+int Engine::pausedToggle()
+{
+    switch(player->state()) {
+        case QMediaPlayer::PausedState:
+            player->play();
+            return 1;
+            break;
+        case QMediaPlayer::PlayingState:
+            player->pause();
+            return 0;
+            break;
+        default:
+            return -1; //invalid request
+    }
+}
+
+bool Engine::pause()
+{
+    bool validRequest = true;
+    if(player->state() != QMediaPlayer::PlayingState) {
+        validRequest = false;
+    }
+    player->pause();
+    return validRequest;
 }
 
 bool Engine::playSelected()
@@ -106,22 +169,10 @@ bool Engine::playSelected()
     }
     player->setMedia(QUrl::fromLocalFile(selected->url.c_str()));
     player->play();
+
     std::string log = "Started playing '" + selected->url + "'";
     qInfo(log.c_str());
-    return true;
-}
-
-bool Engine::resumePlaying()
-{
-    if(player->state() != QMediaPlayer::PausedState) {
-        return false; //failure: player wasn't in paused state.
-    }
-    player->play();
-}
-
-void Engine::pausePlaying()
-{
-    player->pause();
+    return true; //success
 }
 
 void Engine::stopPlaying()
@@ -137,4 +188,13 @@ void Engine::playAll(Playlist * toPlayFrom)
     if(remaining != nullptr) {
         player->setPlaylist(remaining);
     }
+}
+
+void Engine::playAtPosition(qint64 position)
+{
+    if(player->state() == QMediaPlayer::StoppedState) {
+        playSelected();
+    }
+    player->play();
+    player->setPosition(position);
 }
