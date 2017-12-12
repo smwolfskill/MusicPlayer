@@ -337,6 +337,8 @@ void FrmMain::setState_noneSelected()
     ui->actionPause->setToolTip("Pause");
     ui->lblPlaybackStatus->setText((smallFont + "None selected.</font>").c_str());
     ui->lblSelected->setText("");
+    ui->sliPlayback->setMinimum(0);
+    ui->sliPlayback->setMaximum(0);
 }
 
 void FrmMain::setState_songSelected()
