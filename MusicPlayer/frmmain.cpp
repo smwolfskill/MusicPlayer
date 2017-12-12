@@ -11,11 +11,14 @@ FrmMain::FrmMain(QWidget *parent) :
 {
     ui->setupUi(this);
     viewingData = nullptr;
-    viewingSongs = nullptr;
+    tblSongs_contents = nullptr;
+    lstCurrentPlaylist_contents = nullptr;
+    selectedSongList = nullptr;
+    //selected = nullptr;
     smallFont = "<font size=\"2\">";
     iconPause = ui->actionPause->icon();
     iconResume = ui->actionPlay->icon();
-    setState_noneSelected();
+
 
     //Init. context menus:
     playlistMenu = new PlaylistMenu(this, SLOT(ctxAction_renamePlaylist()), SLOT(ctxAction_copyPlaylist()), SLOT(ctxAction_newPlaylist()));
@@ -26,29 +29,23 @@ FrmMain::FrmMain(QWidget *parent) :
                                 SLOT(ctxAction_playLast()), SLOT(ctxAction_playAll()),
                                 SLOT(ctxAction_addToPlaylist()), SLOT(ctxAction_RemoveFromPlaylist()));
 
-    /*sliVolume = new QSlider(ui->mainToolBar);
-    sliVolume->setMinimum(0);
-    sliVolume->setMaximum(100);
-    sliVolume->setValue(23);
-    sliVolume->setOrientation(ui->mainToolBar->orientation());*/
     updateVolumeTooltip();
     sliVolume_action = new QWidgetAction(ui->mainToolBar);
     sliVolume_action->setDefaultWidget(ui->sliVolume);
-    //sliPlayback_action = new QWidgetAction(ui->mainToolBar);
-    //sliPlayback_action->setDefaultWidget(ui->sliPlayback);
-    ui->mainToolBar->addAction(sliVolume_action/*, this, SLOT()*/);
+    ui->mainToolBar->addAction(sliVolume_action);
     ui->mainToolBar->addSeparator();
-    //ui->mainToolBar->addAction(sliPlayback_action);
-    //ui->actionPause->triggered
-    //connect(ui->actionPlay, QAction::Trigger, this, SLOT(hi));
+
     connect(ui->actionPlay, SIGNAL(triggered(bool)), this, SLOT(on_media_play()));
     connect(ui->actionStop, SIGNAL(triggered(bool)), this, SLOT(on_media_stop()));
     connect(ui->actionPause, SIGNAL(triggered(bool)), this, SLOT(on_media_pause()));
     connect(ui->actionSkip, SIGNAL(triggered(bool)), this, SLOT(on_media_skip()));
     connect(ui->actionRewind, SIGNAL(triggered(bool)), this, SLOT(on_media_rewind()));
+
     connect(ui->lstCategories, SIGNAL(currentRowChanged(int)), this, SLOT(on_select_lstCategory(int)));
     connect(ui->lstCategoryMembers, SIGNAL(currentRowChanged(int)), this, SLOT(on_select_lstCategoryMember(int)));
-    connect(ui->lstCategories, SIGNAL(currentRowChanged(int)), this, SLOT(on_select_tblSongs(int)));
+    connect(ui->tblSongs, SIGNAL(currentCellChanged(int,int,int,int)), this, SLOT(on_select_tblSongs(int, int, int, int)));
+    connect(ui->lstCurrentPlaylist, SIGNAL(currentRowChanged(int)), this, SLOT(on_select_lstCurrentPlaylist(int)));
+
 
     //Raise Context menus:
     connect(ui->lstCategoryMembers, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(ctxMenu_lstCategoryMembers(QPoint)));
@@ -69,10 +66,8 @@ FrmMain::FrmMain(QWidget *parent) :
     }
     delete messages;
 
-    setState_songSelected();
-
     //Show library song contents
-    qInfo("Library contents:");
+    /*qInfo("Library contents:");
     for(unsigned i = 0; i < engine->library->songs.size(); i++) {
         qInfo(engine->library->songs[i]->toString().c_str());
     }
@@ -85,11 +80,12 @@ FrmMain::FrmMain(QWidget *parent) :
         qInfo(sessionPlaylist->songs[i]->toString().c_str());
     }
     qInfo("======");
-    //
+    */
 
     //Set Playlists view as default, and update Now Playing
     ui->lstCategories->setCurrentRow(0);
     showNowPlaying();
+    setState_noneSelected();
 }
 
 FrmMain::~FrmMain()
@@ -103,11 +99,11 @@ FrmMain::~FrmMain()
     //qInfo("cleaned up frmMain.");
 }
 
-void FrmMain::resizeEvent(QResizeEvent *event)
+/*void FrmMain::resizeEvent(QResizeEvent *event)
 {
     QMainWindow::resizeEvent(event);
-    //TODO:Resize stuff if needed
-}
+    //Resize stuff if needed. ideally won't
+}*/
 
 void FrmMain::on_sliVolume_valueChanged(int value)
 {
@@ -129,6 +125,7 @@ void FrmMain::updateLblPlayback()
 void FrmMain::showNowPlaying()
 {
     SongVector * nowPlaying = &engine->playlists[0]->songs;
+    lstCurrentPlaylist_contents = nowPlaying;
     ui->lstCurrentPlaylist->clear();
     for(unsigned i = 0; i < nowPlaying->size(); i++) {
         ui->lstCurrentPlaylist->addItem(tr((*nowPlaying)[i]->title.c_str()));
@@ -173,7 +170,7 @@ void FrmMain::showGenres(const GenreVector &genres)
 
 void FrmMain::showSongs(const SongVector &songs)
 {
-    viewingSongs = &songs;
+    tblSongs_contents = &songs;
     for(unsigned i = 0; i < songs.size(); i++) {
         if(i >= ui->tblSongs->rowCount()) { //insert new rows if needed
             ui->tblSongs->insertRow(i);
@@ -189,16 +186,14 @@ void FrmMain::showSongs(const SongVector &songs)
 
 void FrmMain::on_media_play()
 {
-    qint64 songLength = engine->playSelected();
-    if(songLength == -1L) {
-        qWarning("Failed to play selected!");
-    }
-    setState_playing();
+    //Play button is equivalent to context menu "Play All"
+    ctxAction_playAll();
 }
 
 void FrmMain::on_media_stop()
 {
     engine->stopPlaying();
+    nonePlaying = true;
     setState_songSelected();
 }
 
@@ -248,20 +243,23 @@ void FrmMain::on_media_positionChanged(qint64 newPosition)
 
 void FrmMain::on_select_lstCategory(int index)
 {
-    QListWidgetItem * selected = ui->lstCategories->currentItem();
-    //qInfo(selected->text().toStdString().c_str());
-    ui->lstCategoryMembers->clear();
-    ui->tblSongs->clearContents();
-    if(selected->text() == "Playlists") {
-        showPlaylists(engine->playlists);
-    } else if(selected->text() == "Artists") {
-        showArtists(engine->library->artists);
-    } else if(selected->text() == "Albums") {
-        showAlbums(engine->library->albums);
-    } else if(selected->text() == "Genres") {
-        showGenres(engine->library->genres);
-    } else if(selected->text() == "Songs") {
-        showSongs(engine->library->songs);
+    if(index >= 0) {
+        QListWidgetItem * selected = ui->lstCategories->currentItem();
+        //qInfo(selected->text().toStdString().c_str());
+        ui->lstCategoryMembers->clear();
+        ui->tblSongs->clearContents();
+        tblSongs_contents = nullptr;
+        if(selected->text() == "Playlists") {
+            showPlaylists(engine->playlists);
+        } else if(selected->text() == "Artists") {
+            showArtists(engine->library->artists);
+        } else if(selected->text() == "Albums") {
+            showAlbums(engine->library->albums);
+        } else if(selected->text() == "Genres") {
+            showGenres(engine->library->genres);
+        } else if(selected->text() == "Songs") {
+            showSongs(engine->library->songs);
+        }
     }
 }
 
@@ -295,10 +293,36 @@ void FrmMain::on_select_lstCategoryMember(int index)
     }
 }
 
-void FrmMain::on_select_tblSongs(int index)
+void FrmMain::on_select_tblSongs(int rowIndex, int colIndex, int oldRow, int oldCol)
 {
     //update selected lbl if not playing
+    if(rowIndex >= 0) {
+        selectedSongList = tblSongs_contents;
+        selectedIndex = rowIndex;
+        if(nonePlaying) {
+            setState_songSelected();
+        }
+    } else {
+        if(nonePlaying) {
+            setState_noneSelected();
+        }
+    }
+}
 
+void FrmMain::on_select_lstCurrentPlaylist(int index)
+{
+    //update selected lbl if not playing
+    if(index >= 0) {
+        selectedSongList = lstCurrentPlaylist_contents;
+        selectedIndex = index;
+        if(nonePlaying) {
+            setState_songSelected();
+        }
+    } else {
+        if(nonePlaying) {
+        setState_noneSelected();
+        }
+    }
 }
 
 void FrmMain::setState_noneSelected()
@@ -311,6 +335,7 @@ void FrmMain::setState_noneSelected()
     ui->actionPause->setIcon(iconPause);
     ui->actionPause->setToolTip("Pause");
     ui->lblPlaybackStatus->setText((smallFont + "None selected.</font>").c_str());
+    ui->lblSelected->setText("");
 }
 
 void FrmMain::setState_songSelected()
@@ -323,10 +348,16 @@ void FrmMain::setState_songSelected()
     ui->actionPause->setIcon(iconPause);
     ui->actionPause->setToolTip("Pause");
     ui->lblPlaybackStatus->setText((smallFont + "Selected</font>").c_str());
+    Song * selectedSong = (*selectedSongList)[selectedIndex];
+    std::string selectedText = "<i><b>" + selectedSong->title +
+                               "</b></i> by <i>" + selectedSong->artist +
+                               "</i> in <i>" + selectedSong->album + "</i>";
+    ui->lblSelected->setText(selectedText.c_str());
 }
 
 void FrmMain::setState_playing()
 {
+    nonePlaying = false;
     ui->actionPlay->setEnabled(false);
     ui->actionPause->setEnabled(true);
     ui->actionStop->setEnabled(true);
@@ -337,6 +368,7 @@ void FrmMain::setState_playing()
 
 void FrmMain::setState_paused()
 {
+    nonePlaying = false;
     ui->actionPause->setIcon(iconResume);
     ui->actionPause->setToolTip("Resume");
     ui->lblPlaybackStatus->setText((smallFont + "Paused</font>").c_str());
@@ -384,23 +416,57 @@ void FrmMain::ctxMenu_tblSongs(const QPoint &pos)
 //Context menu action events:
 void FrmMain::ctxAction_playOnce()
 {
-    //TODO: some way to get current song to do something with
-    //qInfo(ui->lstCurrentPlaylist->currentItem()->text().toStdString().c_str());
+    if(selectedSongList == nullptr || selectedIndex < 0) {
+        std::string msg = "Cannot Play once: no Song selected!";
+        qWarning(msg.c_str());
+        ui->statusBar->showMessage(tr(msg.c_str()), 5000); //5 secs
+    } else {
+        engine->playOnce((*selectedSongList)[selectedIndex]);
+        setState_playing();
+        showNowPlaying();
+    }
 }
 
 void FrmMain::ctxAction_playNext()
 {
-
+    if(nonePlaying) {
+        ctxAction_playOnce();
+        return;
+    }
+    if(selectedSongList == nullptr || selectedIndex < 0) {
+        std::string msg = "Cannot Play next: no Song selected!";
+        qWarning(msg.c_str());
+        ui->statusBar->showMessage(tr(msg.c_str()), 5000); //5 secs
+    } else {
+        engine->playlists[0]->songs.insertBefore(1, (*selectedSongList)[selectedIndex]);
+        showNowPlaying();
+    }
 }
 
 void FrmMain::ctxAction_playLast()
 {
-
+    if(nonePlaying) {
+        ctxAction_playOnce();
+        return;
+    }
+    if(selectedSongList == nullptr || selectedIndex < 0) {
+        std::string msg = "Cannot Play next: no Song selected!";
+        qWarning(msg.c_str());
+        ui->statusBar->showMessage(tr(msg.c_str()), 5000); //5 secs
+    } else {
+        engine->playlists[0]->songs.push_back((*selectedSongList)[selectedIndex]);
+        showNowPlaying();
+    }
 }
 
 void FrmMain::ctxAction_playAll()
 {
+    qint64 songLength = engine->playSelected();
+    if(songLength == -1L) {
+        qWarning("Failed to play selected!");
+    }
 
+    setState_playing();
 }
 
 void FrmMain::ctxAction_addToPlaylist()

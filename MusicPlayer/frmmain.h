@@ -15,7 +15,7 @@
  * @brief FrmMain --- 'View' component of Music Player. Holds engine and main GUI elements and events.
  * @author      Scott Wolfskill
  * @created     11/13/2017
- * @last_edit   12/11/2017
+ * @last_edit   12/12/2017
  */
 namespace Ui {
 class FrmMain;
@@ -34,7 +34,7 @@ public:
     ~FrmMain();
 
 private slots:
-    void resizeEvent(QResizeEvent * event);
+    //void resizeEvent(QResizeEvent * event);
 
     void on_sliVolume_valueChanged(int value);
 
@@ -49,7 +49,8 @@ private slots:
 
     void on_select_lstCategory(int index);
     void on_select_lstCategoryMember(int index);
-    void on_select_tblSongs(int index);
+    void on_select_tblSongs(int rowIndex, int colIndex, int oldRow, int oldCol);
+    void on_select_lstCurrentPlaylist(int index);
 
     void on_sliPlayback_sliderReleased();
     void on_sliPlayback_sliderPressed();
@@ -80,9 +81,14 @@ private:
     std::string smallFont; //will contain HTML beginning markup for a small text font
     QIcon iconPause; //icon to display on actionPause when can pause current song
     QIcon iconResume; //icon to display on actionPause when current song is paused and can
+    bool nonePlaying;
 
     void * viewingData; //using VIEW, will be typecast into appropriate (type)Vector *
-    const SongVector * viewingSongs; //ptr. to songs currently displayed to user
+    const SongVector * tblSongs_contents; //ptr. to songs currently displayed to user in tblSongs
+    const SongVector * lstCurrentPlaylist_contents; //ptr. to songs currently displaying in lstCurrentPlaylist_contents
+    const SongVector * selectedSongList; //ptr. to songs in list user is currently selecting. Either tblSongs_contents or lstCurrentPlaylist_contents.
+    int selectedIndex; //index in selectedSongList of currently selected song.
+    //Song * selected; //current Song selected
     enum VIEW {PLAYLISTS, ARTISTS, ALBUMS, GENRES}; //represents what kind of data is displayed to user
     VIEW viewingMode;
 

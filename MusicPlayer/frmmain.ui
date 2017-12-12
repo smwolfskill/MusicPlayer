@@ -109,7 +109,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="lblNowPlaying">
+       <widget class="QLabel" name="lblSelected">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
           <horstretch>0</horstretch>

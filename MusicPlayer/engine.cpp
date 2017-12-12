@@ -175,6 +175,14 @@ bool Engine::playSelected()
     return true; //success
 }
 
+void Engine::playOnce(Song * toPlay)
+{
+    playlists[0]->songs.clear();
+    playlists[0]->songs.push_back(toPlay);
+    playlists[0]->goToFirst();
+    playSelected();
+}
+
 void Engine::stopPlaying()
 {
     player->stop();
@@ -184,9 +192,13 @@ void Engine::stopPlaying()
 
 void Engine::playAll(Playlist * toPlayFrom)
 {
-    QMediaPlaylist * remaining = toPlayFrom->getRemaining();
-    if(remaining != nullptr) {
-        player->setPlaylist(remaining);
+    SongVector remaining = toPlayFrom->getRemaining();
+    if(remaining.size() > 0) {
+        QMediaPlaylist * nowPlaying = Song::SongVectorToQMediaPlaylist(remaining);
+        player->setPlaylist(nowPlaying);
+        player->play();
+        playlists[0]->songs.clear();
+        playlists[0]->songs = remaining;
     }
 }
 

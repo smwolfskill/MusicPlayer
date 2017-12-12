@@ -4,12 +4,13 @@
 #include "vector.h"
 #include "json.hpp"
 #include <QString>
+#include <QMediaPlaylist>
 
 /**
  * @brief Song --- represents a Song in the music library.
  * @author      Scott Wolfskill
  * @created     11/13/2017
- * @last_edit   12/11/2017
+ * @last_edit   12/12/2017
  */
 class Song
 {
@@ -37,6 +38,13 @@ public:
     int playCount;
 
     //Methods:
+    /**
+     * @brief Get a QMediaPlaylist representation of a SongVector.
+     * @param songVector
+     * @return nullptr if no songs in SongVector, else QMediaPlaylist.
+     */
+    static QMediaPlaylist * SongVectorToQMediaPlaylist(const SongVector &songs);
+
     Song() {}
     Song(std::string url, std::string title, std::string artist,
          std::string album, std::string genre, unsigned int trackNum, unsigned int year);

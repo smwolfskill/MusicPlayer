@@ -63,9 +63,9 @@ public:
 
     /**
      * @brief Return remaining songs in list after and including selected. Starts at beginning if none selected.
-     * @return QMediaPlaylist representation of remaining songs, or nullptr if no songs in playlist.
+     * @return SongVector to remaining songs, or nullptr if no songs in playlist.
      */
-    QMediaPlaylist * getRemaining();
+    SongVector getRemaining();
 
     std::string toString() const;
 

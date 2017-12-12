@@ -1,6 +1,18 @@
 #include "song.h"
 #include <string>
 
+QMediaPlaylist * Song::SongVectorToQMediaPlaylist(const SongVector &songs)
+{
+    if(songs.size() == 0) { //no songs in playlist
+        return nullptr;
+    }
+    QMediaPlaylist * qPlaylist = new QMediaPlaylist();
+    for(unsigned i = 0; i < songs.size(); i++) {
+        qPlaylist->addMedia(QUrl(songs[i]->url.c_str()));
+    }
+    return qPlaylist;
+}
+
 Song::Song(std::string url, std::string name, std::string artist,
                        std::string album, std::string genre, unsigned int trackNum, unsigned int year) {
     this->url = url;

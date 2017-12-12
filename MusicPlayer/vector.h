@@ -105,11 +105,15 @@ template<class T>
 bool Vector<T>::insertBefore(int index, const T &toAdd)
 {
     std::size_t index_ = (std::size_t) index;
-    if(index < 0 || index_ >= this->size()) {
+    if(index < 0 || index_ > this->size()) {
         return false;
     }
-    constIterator iterAt = getIteratorAt(index);
-    this->insert(iterAt, toAdd); //inserts before iterAt
+    if(index == this->size()) {
+        this->push_back(toAdd);
+    } else {
+        constIterator iterAt = getIteratorAt(index);
+        this->insert(iterAt, toAdd); //inserts before iterAt
+    }
     return true;
 }
 

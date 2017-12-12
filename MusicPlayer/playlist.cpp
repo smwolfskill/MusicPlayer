@@ -76,11 +76,11 @@ bool Playlist::goToSong(Song * const toGoTo)
     return true;
 }
 
-QMediaPlaylist * Playlist::getRemaining()
-{
-    QMediaPlaylist * remaining = new QMediaPlaylist();
+SongVector Playlist::getRemaining()
+{   
+    SongVector remaining = SongVector(0);
     if(songs.size() == 0) { //no songs in playlist
-        return nullptr;
+        return remaining;
     }
     int origSelected = selected;
     Song * select = getSelected();
@@ -91,10 +91,11 @@ QMediaPlaylist * Playlist::getRemaining()
     }
     //Go until end of playlist
     while(select != nullptr) {
-        remaining->addMedia(QUrl(select->url.c_str()));
+        //remaining->addMedia(QUrl(select->url.c_str()));
+        remaining.push_back(select);
         select = getNext(false); //don't return beginning element
     }
-    remaining->setCurrentIndex(1); //TODO: determine if 0-based or 1-based index
+    //remaining->setCurrentIndex(1); //TODO: determine if 0-based or 1-based index
 
     //Set selected back to original
     selected = origSelected;

@@ -12,7 +12,7 @@
  *                   song locating and playing.
  * @author      Scott Wolfskill
  * @created     12/04/2017
- * @last_edit   12/11/2017
+ * @last_edit   12/12/2017
  */
 class Engine
 {
@@ -76,7 +76,11 @@ public:
      */
     bool playSelected();
 
-    //TODO: add method to play a single song, which sets the session playlist to that and calls playSelected().
+    /**
+     * @brief Plays a song once, setting the session playlist to be just that song.
+     * @param toPlay Song to play.
+     */
+    void playOnce(Song * toPlay);
 
     /**
      * @brief Pause or resume currently playing media, if any.
@@ -95,6 +99,7 @@ public:
     /**
      * @brief Plays the remainder of a Playlist from its selected Song until the end.
      *        If none selected, starts at beginning.
+     *        Sets session playlist to this remaining playlist.
      * @param toPlayFrom Playlist to play.
      */
     void playAll(Playlist * toPlayFrom);
