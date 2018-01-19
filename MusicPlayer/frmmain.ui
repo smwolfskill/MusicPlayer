@@ -171,11 +171,23 @@
       </property>
       <item>
        <widget class="QLabel" name="lblCurrentPlaylist">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="text">
          <string>Now Playing</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <property name="margin">
+         <number>0</number>
+        </property>
+        <property name="indent">
+         <number>-1</number>
         </property>
        </widget>
       </item>
@@ -519,6 +531,9 @@
    <addaction name="actionStop"/>
    <addaction name="actionSkip"/>
    <addaction name="separator"/>
+   <addaction name="actionRepeatSong"/>
+   <addaction name="actionRepeatAll"/>
+   <addaction name="separator"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionPlay">
@@ -590,6 +605,44 @@
    </property>
    <property name="toolTip">
     <string>Rewind</string>
+   </property>
+  </action>
+  <action name="actionRepeatSong">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normalon>:/images/resources/repeatSong.png</normalon>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>Repeat Song</string>
+   </property>
+   <property name="toolTip">
+    <string>Repeat Song</string>
+   </property>
+  </action>
+  <action name="actionRepeatAll">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normalon>:/images/resources/repeatAll.ico</normalon>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>Repeat All</string>
+   </property>
+   <property name="iconText">
+    <string>Repeat All</string>
+   </property>
+   <property name="toolTip">
+    <string>Repeat All</string>
    </property>
   </action>
  </widget>

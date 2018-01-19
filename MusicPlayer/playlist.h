@@ -11,7 +11,7 @@
  * @brief Playlist --- class representing a list of Songs in some particular order to be viewed/played in.
  * @author      Scott Wolfskill
  * @created     11/13/2017
- * @last_edit   12/05/2017
+ * @last_edit   01/18/2017
  */
 class Playlist
 {
@@ -48,6 +48,13 @@ public:
      * @return Pointer to next Song after selected.
      */
     Song * getNext(bool returnBeginning = false);
+
+    /**
+     * @brief Move selected to previous Song before currently selected song. If at beginning, will loop back to end.
+     * @param returnEnd If at beginning: if returnEnd true, will return end Song. Else, will return nullptr.
+     * @return Pointer to previous Song before selected.
+     */
+    Song * getPrevious(bool returnEnd = false);
 
     /**
      * @brief Select the first song in the Playlist, if any.

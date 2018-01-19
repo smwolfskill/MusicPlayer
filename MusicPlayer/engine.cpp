@@ -31,7 +31,8 @@ std::string Engine::msToHMS(qint64 milliseconds)
     return HMS;
 }
 
-Engine::Engine(const QObject * signalReceiver, const char * durationChangedSlot, const char * positionChangedSlot)
+Engine::Engine(const QObject * signalReceiver, const char * durationChangedSlot,
+               const char * positionChangedSlot, const char * mediaChangedSlot, const char * mediaStatusChangedSlot)
 {
     playlists = PlaylistVector(0);
     Playlist * sessionPlaylist = new Playlist("Now Playing"); //empty session playlist
@@ -41,10 +42,13 @@ Engine::Engine(const QObject * signalReceiver, const char * durationChangedSlot,
     metadata = nullptr;
     library = nullptr;
     loadedLibs = StringVector(0);
+    repeatSong = false;
+    repeatAll = false;
 
-    //TESTING:
     QObject::connect(player, SIGNAL(durationChanged(qint64)), signalReceiver, durationChangedSlot);
     QObject::connect(player, SIGNAL(positionChanged(qint64)), signalReceiver, positionChangedSlot);
+    QObject::connect(player, SIGNAL(currentMediaChanged(QMediaContent)), signalReceiver, mediaChangedSlot);
+    QObject::connect(player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)), signalReceiver, mediaStatusChangedSlot);
 }
 
 Engine::Engine(std::string metadata_path) {
@@ -54,6 +58,8 @@ Engine::Engine(std::string metadata_path) {
     metadata = nullptr;
     library = nullptr;
     loadedLibs = StringVector(0);
+    repeatSong = false;
+    repeatAll = false;
 }
 
 Engine::~Engine() {
@@ -209,4 +215,30 @@ void Engine::playAtPosition(qint64 position)
     }
     player->play();
     player->setPosition(position);
+}
+
+void Engine::skip()
+{
+    playlists[0]->getNext();
+    playSelected();
+}
+
+void Engine::rewind()
+{
+    playlists[0]->getPrevious();
+    playSelected();
+}
+
+bool Engine::songFinished()
+{
+    if(repeatSong) {
+        playSelected();
+        return true;
+    }
+    if(playlists[0]->getNext(repeatAll) != nullptr) {
+        //If at end of session playlist and repeatAll is true, will play beginning song
+        playSelected();
+        return true;
+    }
+    return false;
 }

@@ -35,11 +35,14 @@ FrmMain::FrmMain(QWidget *parent) :
     ui->mainToolBar->addAction(sliVolume_action);
     ui->mainToolBar->addSeparator();
 
-    connect(ui->actionPlay, SIGNAL(triggered(bool)), this, SLOT(on_media_play()));
-    connect(ui->actionStop, SIGNAL(triggered(bool)), this, SLOT(on_media_stop()));
-    connect(ui->actionPause, SIGNAL(triggered(bool)), this, SLOT(on_media_pause()));
-    connect(ui->actionSkip, SIGNAL(triggered(bool)), this, SLOT(on_media_skip()));
-    connect(ui->actionRewind, SIGNAL(triggered(bool)), this, SLOT(on_media_rewind()));
+    //Connect ui to slots:
+    connect(ui->actionPlay, SIGNAL(triggered(bool)), this, SLOT(on_actionPlay()));
+    connect(ui->actionStop, SIGNAL(triggered(bool)), this, SLOT(on_actionStop()));
+    connect(ui->actionPause, SIGNAL(triggered(bool)), this, SLOT(on_actionPause()));
+    connect(ui->actionSkip, SIGNAL(triggered(bool)), this, SLOT(on_actionSkip()));
+    connect(ui->actionRewind, SIGNAL(triggered(bool)), this, SLOT(on_actionRewind()));
+    connect(ui->actionRepeatSong, SIGNAL(toggled(bool)), this, SLOT(on_actionRepeatSong()));
+    connect(ui->actionRepeatAll, SIGNAL(toggled(bool)), this, SLOT(on_actionRepeatAll()));
 
     connect(ui->lstCategories, SIGNAL(currentRowChanged(int)), this, SLOT(on_select_lstCategory(int)));
     connect(ui->lstCategoryMembers, SIGNAL(currentRowChanged(int)), this, SLOT(on_select_lstCategoryMember(int)));
@@ -55,7 +58,8 @@ FrmMain::FrmMain(QWidget *parent) :
 
     //Load engine
     ui->statusBar->showMessage("Loading libraries...");
-    engine = new Engine(this, SLOT(on_media_durationChanged(qint64)), SLOT(on_media_positionChanged(qint64))); //use default metadata path
+    engine = new Engine(this, SLOT(on_media_durationChanged(qint64)), SLOT(on_media_positionChanged(qint64)),
+                        SLOT(on_media_mediaChanged(QMediaContent)), SLOT(on_media_statusChanged(QMediaPlayer::MediaStatus))); //use default metadata path
     StringVector * messages = engine->loadAll(); //load metadata, then libraries it links to
     if(messages != nullptr) {
         for(unsigned i = 0; i < messages->size(); i++) {
@@ -82,6 +86,8 @@ FrmMain::FrmMain(QWidget *parent) :
     qInfo("======");
     */
 
+    ui->actionRepeatSong->setChecked(engine->repeatSong);
+    ui->actionRepeatAll->setChecked(engine->repeatAll);
     //Set Playlists view as default, and update Now Playing
     ui->lstCategories->setCurrentRow(0);
     showNowPlaying();
@@ -184,21 +190,21 @@ void FrmMain::showSongs(const SongVector &songs)
     }
 }
 
-void FrmMain::on_media_play()
+void FrmMain::on_actionPlay()
 {
     //Play button is equivalent to context menu "Play All"
     //ctxAction_playAll();
     ctxAction_playOnce(); //TEMP playOnce
 }
 
-void FrmMain::on_media_stop()
+void FrmMain::on_actionStop()
 {
     engine->stopPlaying();
     nonePlaying = true;
     setState_songSelected();
 }
 
-void FrmMain::on_media_pause()
+void FrmMain::on_actionPause()
 {
     switch(engine->pausedToggle()) {
         case 1: //was paused, now playing
@@ -215,14 +221,38 @@ void FrmMain::on_media_pause()
     }
 }
 
-void FrmMain::on_media_skip()
+void FrmMain::on_actionSkip()
 {
-
+    if(lstCurrentPlaylist_contents == nullptr || lstCurrentPlaylist_contents->size() == 0) {
+        std::string msg = "Cannot skip: Nothing currently playing.";
+        qWarning(msg.c_str());
+        ui->statusBar->showMessage(tr(msg.c_str()), 5000); //5 secs
+    } else {
+        engine->skip();
+        setState_playing();
+    }
 }
 
-void FrmMain::on_media_rewind()
+void FrmMain::on_actionRewind()
 {
+    if(lstCurrentPlaylist_contents == nullptr || lstCurrentPlaylist_contents->size() == 0) {
+        std::string msg = "Cannot rewind: Nothing currently playing.";
+        qWarning(msg.c_str());
+        ui->statusBar->showMessage(tr(msg.c_str()), 5000); //5 secs
+    } else {
+        engine->rewind();
+        setState_playing();
+    }
+}
 
+void FrmMain::on_actionRepeatSong()
+{
+    engine->repeatSong = ui->actionRepeatSong->isChecked();
+}
+
+void FrmMain::on_actionRepeatAll()
+{
+    engine->repeatAll = ui->actionRepeatAll->isChecked();
 }
 
 void FrmMain::on_media_durationChanged(qint64 newDuration)
@@ -240,6 +270,30 @@ void FrmMain::on_media_positionChanged(qint64 newPosition)
     songPosition = Engine::msToHMS(newPosition);
     updateLblPlayback();
     ui->sliPlayback->setValue(newPosition);
+}
+
+void FrmMain::on_media_mediaChanged(const QMediaContent &media)
+{
+    //qInfo("media changed!");
+    Song * playing = engine->playlists[0]->getSelected(); //get current song playing in session playlist
+    std::string playingInfo = "<i><b>" + playing->title +
+                               "</b></i> by <i>" + playing->artist +
+                               "</i> in <i>" + playing->album + "</i>";
+    ui->lblSelected->setText(playingInfo.c_str());
+}
+
+void FrmMain::on_media_statusChanged(QMediaPlayer::MediaStatus status)
+{
+    if(status == QMediaPlayer::EndOfMedia) { //song finished normally
+        if(!engine->songFinished()) {
+            //No other song set to be playing.
+            if(selectedSongList == nullptr || selectedIndex < 0) {
+                setState_noneSelected();
+            } else {
+                setState_songSelected();
+            }
+        }
+    }
 }
 
 void FrmMain::on_select_lstCategory(int index)
@@ -321,15 +375,21 @@ void FrmMain::on_select_lstCurrentPlaylist(int index)
         }
     } else {
         if(nonePlaying) {
-        setState_noneSelected();
+            setState_noneSelected();
         }
     }
 }
 
 void FrmMain::setState_noneSelected()
 {
-    ui->actionSkip->setEnabled(false);
-    ui->actionRewind->setEnabled(false);
+    //Show Skip and Rewind only if there are songs in session playlist.
+    bool nowPlayingSongs = true;
+    if(lstCurrentPlaylist_contents == nullptr || lstCurrentPlaylist_contents->size() == 0) {
+        nowPlayingSongs = false;
+    }
+    ui->actionSkip->setEnabled(nowPlayingSongs);
+    ui->actionRewind->setEnabled(nowPlayingSongs);
+
     ui->actionPlay->setEnabled(false);
     ui->actionStop->setEnabled(false);
     ui->actionPause->setEnabled(false);
@@ -343,8 +403,14 @@ void FrmMain::setState_noneSelected()
 
 void FrmMain::setState_songSelected()
 {
-    ui->actionSkip->setEnabled(true);
-    ui->actionRewind->setEnabled(true);
+    //Show Skip and Rewind only if there are songs in session playlist.
+    bool nowPlayingSongs = true;
+    if(lstCurrentPlaylist_contents == nullptr || lstCurrentPlaylist_contents->size() == 0) {
+        nowPlayingSongs = false;
+    }
+    ui->actionSkip->setEnabled(nowPlayingSongs);
+    ui->actionRewind->setEnabled(nowPlayingSongs);
+
     ui->actionPlay->setEnabled(true);
     ui->actionStop->setEnabled(false);
     ui->actionPause->setEnabled(false);
@@ -361,6 +427,8 @@ void FrmMain::setState_songSelected()
 void FrmMain::setState_playing()
 {
     nonePlaying = false;
+    ui->actionSkip->setEnabled(true);
+    ui->actionRewind->setEnabled(true);
     ui->actionPlay->setEnabled(false);
     ui->actionPause->setEnabled(true);
     ui->actionStop->setEnabled(true);
@@ -448,17 +516,20 @@ void FrmMain::ctxAction_playNext()
 
 void FrmMain::ctxAction_playLast()
 {
-    if(nonePlaying) {
+    /*if(nonePlaying) {
         ctxAction_playOnce();
         return;
-    }
+    }*/
     if(selectedSongList == nullptr || selectedIndex < 0) {
-        std::string msg = "Cannot Play next: no Song selected!";
+        std::string msg = "Cannot Play last: no Song selected!";
         qWarning(msg.c_str());
         ui->statusBar->showMessage(tr(msg.c_str()), 5000); //5 secs
     } else {
         engine->playlists[0]->songs.push_back((*selectedSongList)[selectedIndex]);
         showNowPlaying();
+    }
+    if(nonePlaying) {
+        //TODO: have automatically play through the session playlist
     }
 }
 

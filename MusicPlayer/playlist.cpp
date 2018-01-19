@@ -50,13 +50,26 @@ Song * Playlist::getSelected() const
 
 Song * Playlist::getNext(bool returnBeginning)
 {
-    if((std::size_t) selected == songs.size()) { //at end. loop back to beginning.
+    if((std::size_t) selected + 1 == songs.size()) { //at end. loop back to beginning.
         selected = 0;
         if(!returnBeginning) {
             return nullptr; //don't return beginning if requested. Indicates Playlist finished.
         }
     } else { //go to next song.
         selected++;
+    }
+    return getSelected();
+}
+
+Song * Playlist::getPrevious(bool returnEnd)
+{
+    if((std::size_t) selected == 0) { //at beginning. loop back to end.
+        selected = ((int)songs.size()) - 1;
+        if(!returnEnd) {
+            return nullptr; //don't return end if requested. Indicates Playlist skipped back to end song.
+        }
+    } else { //go to previous song.
+        selected--;
     }
     return getSelected();
 }

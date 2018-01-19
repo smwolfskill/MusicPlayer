@@ -15,7 +15,7 @@
  * @brief FrmMain --- 'View' component of Music Player. Holds engine and main GUI elements and events.
  * @author      Scott Wolfskill
  * @created     11/13/2017
- * @last_edit   12/12/2017
+ * @last_edit   01/18/2017
  */
 namespace Ui {
 class FrmMain;
@@ -38,14 +38,20 @@ private slots:
 
     void on_sliVolume_valueChanged(int value);
 
+    //Actions:
+    void on_actionPlay();
+    void on_actionStop();
+    void on_actionPause();
+    void on_actionSkip();
+    void on_actionRewind();
+    void on_actionRepeatSong();
+    void on_actionRepeatAll();
+
     //Playback slots:
-    void on_media_play();
-    void on_media_stop();
-    void on_media_pause();
-    void on_media_skip();
-    void on_media_rewind();
     void on_media_durationChanged(qint64 newDuration); //called when length of song playing is set
     void on_media_positionChanged(qint64 newPosition); //called when current position in song playing is updated
+    void on_media_mediaChanged(const QMediaContent &media); //called when new song loaded into player
+    void on_media_statusChanged(QMediaPlayer::MediaStatus status); //called when media status changed (e.g. song ends)
 
     void on_select_lstCategory(int index);
     void on_select_lstCategoryMember(int index);

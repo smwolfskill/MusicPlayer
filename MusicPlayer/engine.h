@@ -12,7 +12,7 @@
  *                   song locating and playing.
  * @author      Scott Wolfskill
  * @created     12/04/2017
- * @last_edit   12/12/2017
+ * @last_edit   01/18/2017
  */
 class Engine
 {
@@ -25,6 +25,9 @@ public:
     MusicLibrary * library;
     PlaylistVector playlists; //[session playlist, user_created1, user_created2, ...] format
 
+    bool repeatSong; //if true, repeats currently playing song indefinitely.
+    bool repeatAll; //if true, repeats session playlist upon completion indefinitely.
+
     //Methods:
     /**
      * @brief Convert milliseconds to string format H:MM:SS. Typically expect M:SS.
@@ -33,7 +36,8 @@ public:
      */
     static std::string msToHMS(qint64 milliseconds);
 
-    Engine(const QObject * signalReceiver, const char * durationChangedSlot, const char * positionChangedSlot);
+    Engine(const QObject * signalReceiver, const char * durationChangedSlot,
+           const char * positionChangedSlot, const char * mediaChangedSlot, const char * mediaStatusChangedSlot);
     Engine(std::string metadata_path);
     ~Engine();
 
@@ -105,6 +109,22 @@ public:
     void playAll(Playlist * toPlayFrom);
 
     void playAtPosition(qint64 position);
+
+    /**
+     * @brief Skip to beginning of next song in session playlist.
+     */
+    void skip();
+
+    /**
+     * @brief Go to beginning of previous song in session playlist.
+     */
+    void rewind();
+
+    /**
+     * @brief Call when a song is finished playing. Will play next song or repeat current depending on settings.
+     * @return true if another song has started playing.
+     */
+    bool songFinished();
 
 private:
     StringVector loadedLibs; //list of libraries already loaded into the engine
