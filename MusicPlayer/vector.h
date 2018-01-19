@@ -108,7 +108,8 @@ bool Vector<T>::insertBefore(int index, const T &toAdd)
     if(index < 0 || index_ > this->size()) {
         return false;
     }
-    if(index == this->size()) {
+    std::size_t tmp = this->size();
+    if(index_ == tmp/*this->size()*/) {
         this->push_back(toAdd);
     } else {
         constIterator iterAt = getIteratorAt(index);
