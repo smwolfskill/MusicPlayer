@@ -63,6 +63,7 @@ std::string MusicLibrary::addToLibrary(const std::string directoryUrl)
                         //qInfo(tag->album().toCString());
                         //qInfo(tag->genre().toCString()); //char* form
                         //qInfo(tag->genre().to8Bit().c_str()); //std::string -> char* form (if string is useful)
+                        TagLib::String hi = tag->artist().to8Bit(false);
                         Song * song = new Song(curEntryPath, tag->title().to8Bit(), tag->artist().to8Bit(),
                                                tag->album().to8Bit(), tag->genre().to8Bit(), tag->track(), tag->year());
                         addSong(song);

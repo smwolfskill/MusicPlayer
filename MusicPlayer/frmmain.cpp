@@ -88,6 +88,7 @@ FrmMain::FrmMain(QWidget *parent) :
 
     ui->actionRepeatSong->setChecked(engine->repeatSong);
     ui->actionRepeatAll->setChecked(engine->repeatAll);
+    on_sliVolume_valueChanged(ui->sliVolume->value()); //set engine volume to match slider's initial volume
     //Set Playlists view as default, and update Now Playing
     ui->lstCategories->setCurrentRow(0);
     showNowPlaying();
