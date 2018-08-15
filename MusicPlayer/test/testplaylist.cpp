@@ -2,8 +2,8 @@
 
 void TestPlaylist::init()
 {
-    song1 = new Song("url1", "title1", "artist1", "album1", "genre1", 2000);
-    song2 = new Song("url2", "title2", "artist2", "album2", "genre2", 1900);
+    song1 = new Song("url1", "title1", "artist1", "album1", "genre1", 1, 2000);
+    song2 = new Song("url2", "title2", "artist2", "album2", "genre2", 3, 1900);
     emptyPlaylist = new Playlist("empty"); //empty playlist
     song1Playlist = new Playlist("song1");
     song1Playlist->songs.push_back(song1); //[song1]

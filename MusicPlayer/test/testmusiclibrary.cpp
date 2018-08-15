@@ -12,10 +12,10 @@ void TestMusicLibrary::initTestCase()
     testFolder = "/home/scott/Qt/Projects/MusicPlayer/MusicPlayer/test/Resources/";
     //Expected Songs:
     immediate = new Song(testFolder + "/Lostprophets - Can't Catch Tomorrow.mp3", "Can't Catch Tomorrow",
-                         "Lostprophets", "Liberation Transmission", "Rock", 2006);
+                         "Lostprophets", "Liberation Transmission", "Rock", 6, 2006);
     std::string subDir = testFolder + "/Music Folder 1";
-    sub1 = new Song(subDir + "/Coldplay - Fix You.mp3", "Fix You", "Coldplay", "X&Y", "Alternative", 2005);
-    sub2 = new Song(subDir + "/Coldplay - Talk.mp3", "Talk", "Coldplay", "X&Y", "Alternative", 2005);
+    sub1 = new Song(subDir + "/Coldplay - Fix You.mp3", "Fix You", "Coldplay", "X&Y", "Alternative", 4, 2005);
+    sub2 = new Song(subDir + "/Coldplay - Talk.mp3", "Talk", "Coldplay", "X&Y", "Alternative", 5, 2005);
 }
 
 void TestMusicLibrary::cleanupTestCase()
