@@ -33,6 +33,13 @@ public:
     explicit FrmMain(QWidget *parent = 0);
     ~FrmMain();
 
+    /**
+     * @brief statusWarning Shows a warning in the status bar when something unexpected occurs.
+     * @param message To show in the status display.
+     * @param time_ms Time in milliseconds to display the warning.
+     */
+    void statusWarning(std::string message, int time_ms = 5000);
+
 private slots:
     //void resizeEvent(QResizeEvent * event);
 

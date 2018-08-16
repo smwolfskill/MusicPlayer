@@ -108,6 +108,13 @@ public:
      */
     void playAll(Playlist * toPlayFrom);
 
+    /**
+     * @brief Sets the 'Now Playing' playlist to a new SongVector and starts playing at a selection.
+     * @param toPlayFrom SongVector to set to the 'Now Playing' playlist.
+     * @param selected_index 0-based index of selected song in the list.
+     */
+    void playAll(const SongVector * toPlayFrom, int selected_index);
+
     void playAtPosition(qint64 position);
 
     /**

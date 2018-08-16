@@ -208,6 +208,14 @@ void Engine::playAll(Playlist * toPlayFrom)
     }
 }
 
+void Engine::playAll(const SongVector * toPlayFrom, int selected_index)
+{
+    playlists[0]->songs.clear();
+    playlists[0]->songs = *toPlayFrom;
+    playlists[0]->goToIndex(selected_index);
+    playSelected();
+}
+
 void Engine::playAtPosition(qint64 position)
 {
     if(player->state() == QMediaPlayer::StoppedState) {

@@ -89,6 +89,15 @@ bool Playlist::goToSong(Song * const toGoTo)
     return true;
 }
 
+bool Playlist::goToIndex(int index)
+{
+    if(index < 0 || index >= songs.size()) {
+        return false; //out of bounds
+    }
+    selected = index;
+    return true;
+}
+
 SongVector Playlist::getRemaining()
 {   
     SongVector remaining = SongVector(0);

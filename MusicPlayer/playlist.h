@@ -69,6 +69,13 @@ public:
     bool goToSong(Song * const toGoTo);
 
     /**
+     * @brief Set current Song to be the one at the index.
+     * @param index 0-based index to go to.
+     * @return true if index is within the Playlist bounds.
+     */
+    bool goToIndex(int index);
+
+    /**
      * @brief Return remaining songs in list after and including selected. Starts at beginning if none selected.
      * @return SongVector to remaining songs, or nullptr if no songs in playlist.
      */

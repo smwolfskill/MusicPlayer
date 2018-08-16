@@ -106,6 +106,12 @@ FrmMain::~FrmMain()
     //qInfo("cleaned up frmMain.");
 }
 
+void FrmMain::statusWarning(std::string message, int time_ms)
+{
+    qWarning(message.c_str());
+    ui->statusBar->showMessage(tr(message.c_str()), time_ms);
+}
+
 /*void FrmMain::resizeEvent(QResizeEvent *event)
 {
     QMainWindow::resizeEvent(event);
@@ -194,8 +200,8 @@ void FrmMain::showSongs(const SongVector &songs)
 void FrmMain::on_actionPlay()
 {
     //Play button is equivalent to context menu "Play All"
-    //ctxAction_playAll();
-    ctxAction_playOnce(); //TEMP playOnce
+    ctxAction_playAll();
+    //ctxAction_playOnce(); //TEMP playOnce
 }
 
 void FrmMain::on_actionStop()
@@ -225,9 +231,7 @@ void FrmMain::on_actionPause()
 void FrmMain::on_actionSkip()
 {
     if(lstCurrentPlaylist_contents == nullptr || lstCurrentPlaylist_contents->size() == 0) {
-        std::string msg = "Cannot skip: Nothing currently playing.";
-        qWarning(msg.c_str());
-        ui->statusBar->showMessage(tr(msg.c_str()), 5000); //5 secs
+        statusWarning("Cannot skip: Nothing currently playing.");
     } else {
         engine->skip();
         setState_playing();
@@ -237,9 +241,7 @@ void FrmMain::on_actionSkip()
 void FrmMain::on_actionRewind()
 {
     if(lstCurrentPlaylist_contents == nullptr || lstCurrentPlaylist_contents->size() == 0) {
-        std::string msg = "Cannot rewind: Nothing currently playing.";
-        qWarning(msg.c_str());
-        ui->statusBar->showMessage(tr(msg.c_str()), 5000); //5 secs
+        statusWarning("Cannot rewind: Nothing currently playing.");
     } else {
         engine->rewind();
         setState_playing();
@@ -489,9 +491,7 @@ void FrmMain::ctxMenu_tblSongs(const QPoint &pos)
 void FrmMain::ctxAction_playOnce()
 {
     if(selectedSongList == nullptr || selectedIndex < 0) {
-        std::string msg = "Cannot Play once: no Song selected!";
-        qWarning(msg.c_str());
-        ui->statusBar->showMessage(tr(msg.c_str()), 5000); //5 secs
+        statusWarning("Cannot Play once: no Song selected!");
     } else {
         engine->playOnce((*selectedSongList)[selectedIndex]);
         setState_playing();
@@ -506,9 +506,7 @@ void FrmMain::ctxAction_playNext()
         return;
     }
     if(selectedSongList == nullptr || selectedIndex < 0) {
-        std::string msg = "Cannot Play next: no Song selected!";
-        qWarning(msg.c_str());
-        ui->statusBar->showMessage(tr(msg.c_str()), 5000); //5 secs
+        statusWarning("Cannot Play next: no Song selected!");
     } else {
         engine->playlists[0]->songs.insertBefore(1, (*selectedSongList)[selectedIndex]);
         showNowPlaying();
@@ -522,9 +520,7 @@ void FrmMain::ctxAction_playLast()
         return;
     }*/
     if(selectedSongList == nullptr || selectedIndex < 0) {
-        std::string msg = "Cannot Play last: no Song selected!";
-        qWarning(msg.c_str());
-        ui->statusBar->showMessage(tr(msg.c_str()), 5000); //5 secs
+        statusWarning("Cannot Play last: no Song selected!");
     } else {
         engine->playlists[0]->songs.push_back((*selectedSongList)[selectedIndex]);
         showNowPlaying();
@@ -536,12 +532,37 @@ void FrmMain::ctxAction_playLast()
 
 void FrmMain::ctxAction_playAll()
 {
+    //OLD
     /*qint64 songLength = engine->playSelected();
     if(songLength == -1L) {
         qWarning("Failed to play selected!");
     }
 
     setState_playing();*/
+    //NEW:
+    qInfo(std::to_string(selectedIndex).c_str());
+    //const SongVector * selectedSongList
+
+    if(selectedSongList == nullptr || selectedIndex < 0) {
+        statusWarning("Cannot Play all: no Song selected!");
+    } else {
+        if(selectedSongList == tblSongs_contents) {
+            //Set Now Playing to be the current song list, and start playing with the current selection.
+            engine->playAll(selectedSongList, selectedIndex);
+            setState_playing();
+            showNowPlaying();
+        } else if(selectedSongList == lstCurrentPlaylist_contents) {
+            //Don't change Now Playing, and start playing with the current selection.
+            if(!engine->playlists[0]->goToIndex(selectedIndex)) {
+                statusWarning("Engine playlist not in sync with Now Playing. Contact developer.", 10000);
+            }
+            engine->playSelected();
+            setState_playing();
+        } else {
+            statusWarning("Current selected song list is corrupted. Contact developer.", 10000);
+        }
+
+    }
 }
 
 void FrmMain::ctxAction_addToPlaylist()
