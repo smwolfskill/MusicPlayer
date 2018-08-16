@@ -110,7 +110,7 @@ bool Vector<T>::insertBefore(int index, const T &toAdd)
     }
     std::size_t tmp = this->size();
     if(index_ == tmp/*this->size()*/) {
-        this->push_back(toAdd);
+        this->push_back(toAdd); //insert at end
     } else {
         constIterator iterAt = getIteratorAt(index);
         this->insert(iterAt, toAdd); //inserts before iterAt
@@ -142,10 +142,11 @@ void Vector<T>::sort() {
 template<class T>
 constIterator Vector<T>::getIteratorAt(int index) const
 {
-    constIterator iterator = this->begin();
+    constIterator iterator = this->cbegin();
     int count = 0;
     while(count < index) {
-        iterator++;
+        iterator++; //PROBLEM: getting stuck at begin! inf. loop!
+        count++;
     }
     return iterator;
 }

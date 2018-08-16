@@ -434,7 +434,7 @@ void FrmMain::setState_playing()
     ui->actionPause->setEnabled(true);
     ui->actionStop->setEnabled(true);
     ui->actionPause->setIcon(iconPause);
-    ui->actionPause->setToolTip("Play");
+    ui->actionPause->setToolTip("Pause");
     ui->lblPlaybackStatus->setText((smallFont + "Playing</font>").c_str());
 }
 

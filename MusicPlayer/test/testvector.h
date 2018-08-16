@@ -17,8 +17,10 @@ class TestVector : public QObject
 private:
     Vector<int> * emptyPlaylist;
     Vector<int> * song1Playlist;
+    Vector<int> * playlist2;
     int song1;
     int song2;
+    int song3;
 
 private slots:
     // functions executed by QtTest before and after test suite
