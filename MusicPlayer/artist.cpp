@@ -2,6 +2,14 @@
 
 const Artist::ArtistCompare Artist::artistCmp = ArtistCompare();
 
+bool Artist::compareBy_name(const Artist * const a, const Artist * const b)
+{
+    if(strcmp(a->name.c_str(), b->name.c_str()) < 0) {
+        return true;
+    }
+    return false;
+}
+
 Artist::Artist(const std::string name)
 {
     this->name = name;
@@ -14,12 +22,4 @@ Artist::~Artist()
 {
     delete albums[0];
     albums.clear();
-}
-
-bool Artist::operator <(const Artist &other)
-{
-    if(strcmp(name.c_str(), other.name.c_str()) < 0) {
-        return true;
-    }
-    return false;
 }

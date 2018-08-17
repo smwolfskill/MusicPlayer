@@ -15,7 +15,7 @@
  * @brief FrmMain --- 'View' component of Music Player. Holds engine and main GUI elements and events.
  * @author      Scott Wolfskill
  * @created     11/13/2017
- * @last_edit   01/18/2017
+ * @last_edit   08/17/2018
  */
 namespace Ui {
 class FrmMain;

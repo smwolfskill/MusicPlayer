@@ -8,7 +8,7 @@
  * @brief Vector --- extension of std::vector for intuitive element traversal, insertion and removal.
  * @author      Scott Wolfskill
  * @created     11/28/2017
- * @last_edit   12/04/2017
+ * @last_edit   08/17/2018
  */
 template<class T>
 class Vector : public std::vector<T>

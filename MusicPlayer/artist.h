@@ -9,7 +9,7 @@
  * @brief Artist --- Represents the author of some Album(s).
  * @author      Scott Wolfskill
  * @created     11/13/2017
- * @last_edit   12/05/2017
+ * @last_edit   08/17/2018
  */
 class Artist
 {
@@ -37,15 +37,14 @@ public:
 
 
     //Methods:
-    Artist(const std::string name);
-    ~Artist();
-
     /**
-     * @brief For sorting purposes, define a < b if a.name is alphabetically before b.name.
-     * @param other Artist to compare with.
+     * @brief Compare two Artists alphabetically.
      * @return true if a's name is alphabetically before b's.
      */
-    bool operator <(const Artist &other);
+    static bool compareBy_name(const Artist * const a, const Artist * const b);
+
+    Artist(const std::string name);
+    ~Artist();
 
     //std::string toString() const;
 

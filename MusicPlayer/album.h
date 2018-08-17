@@ -8,7 +8,7 @@
  * @brief Album --- represents an Album containing a list of songs released together by an Artist.
  * @author      Scott Wolfskill
  * @created     11/13/2017
- * @last_edit   12/04/2017
+ * @last_edit   08/17/2018
  */
 class Album
 {
@@ -33,20 +33,19 @@ public:
 
     //Methods:
     /**
+     * @brief Compare two Albums alphabetically.
+     * @return true if a's name is alphabetically before b's.
+     */
+    static bool compareBy_name(const Album * const a, const Album * const b);
+
+    /**
      * @brief Create empty Album with name, release date.
      * @param name Album name.
      * @param released Year released. Default -1 means unknown or N/A.
      */
     Album(const std::string name, int released = -1);
 
-    /**
-     * @brief For sorting purposes, define a < b if a.name is alphabetically before b.name.
-     * @param other Album to compare with.
-     * @return true if a's name is alphabetically before b's.
-     */
-    bool operator <(const Album &other);
     //std::string toString() const;
-
 };
 
 #endif // ALBUM_H

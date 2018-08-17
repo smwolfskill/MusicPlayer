@@ -8,7 +8,7 @@
  * @brief Genre --- Represents the musical genre of a Song.
  * @author      Scott Wolfskill
  * @created     12/04/2017
- * @last_edit   12/05/2017
+ * @last_edit   08/17/2018
  */
 class Genre
 {
@@ -30,14 +30,14 @@ public:
     SongVector songs; //songs in genre
 
     //Methods:
-    Genre(const std::string name);
-
     /**
-     * @brief For sorting purposes, define a < b if a.name is alphabetically before b.name.
-     * @param other Genre to compare with.
+     * @brief Compare two Genres alphabetically.
      * @return true if a's name is alphabetically before b's.
      */
-    bool operator <(const Genre &other);
+    static bool compareBy_name(const Genre * const a, const Genre * const b);
+
+    Genre(const std::string name);
+
 };
 
 #endif // GENRE_H

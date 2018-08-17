@@ -10,7 +10,7 @@
  * @brief Song --- represents a Song in the music library.
  * @author      Scott Wolfskill
  * @created     11/13/2017
- * @last_edit   12/12/2017
+ * @last_edit   08/17/2018
  */
 class Song
 {
