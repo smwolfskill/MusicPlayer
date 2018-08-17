@@ -36,6 +36,8 @@ private slots:
     void testInsertBefore();
     void testRemoveAt();
     void testSort();
+
+    static bool compareDescending(int a, int b);
 };
 
 #endif // TESTVECTOR_H

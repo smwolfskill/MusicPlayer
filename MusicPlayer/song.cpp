@@ -13,6 +13,22 @@ QMediaPlaylist * Song::SongVectorToQMediaPlaylist(const SongVector &songs)
     return qPlaylist;
 }
 
+bool Song::compareBy_trackNum(const Song * const a, const Song * const b)
+{
+    if(a->trackNum < b->trackNum) {
+        return true;
+    }
+    return false;
+}
+
+bool Song::compareBy_title(const Song * const a, const Song * const b)
+{
+    if(strcmp(a->title.c_str(), b->title.c_str()) < 0) {
+        return true;
+    }
+    return false;
+}
+
 Song::Song(std::string url, std::string name, std::string artist,
                        std::string album, std::string genre, unsigned int trackNum, unsigned int year) {
     this->url = url;
@@ -54,14 +70,6 @@ bool Song::Equals(const Song *const other) const
         return false;
     }
     return true;
-}
-
-bool Song::operator <(const Song &other) const
-{
-    if(strcmp(title.c_str(), other.title.c_str()) < 0) {
-        return true;
-    }
-    return false;
 }
 
 std::string Song::toString() const

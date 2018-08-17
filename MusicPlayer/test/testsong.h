@@ -23,7 +23,8 @@ private slots:
     void cleanup();*/
 
     void testEquals();
-    void testOperatorLessThan(); //test operator< overload
+    void testCompareBy_trackNum();
+    void testCompareBy_title();
     void testJson();
 };
 

@@ -52,9 +52,9 @@ public:
     //T operator [](size_type index) { return (*this)[index]; }
 
     /**
-     * @brief Sort the vector using std::sort and operator<, which must be defined for class T.
+     * @brief Sort the vector using a binary comparison function pointer defined for class T.
      */
-    void sort();
+    void sort(bool (*compare)(const T, const T));
 
 private:
     //Vars:
@@ -135,8 +135,8 @@ bool Vector<T>::removeAt(int index)
 }
 
 template<class T>
-void Vector<T>::sort() {
-    std::sort(this->begin(), this->end);
+void Vector<T>::sort(bool (*compare)(const T, const T)) {
+    std::sort(this->begin(), this->end(), compare);
 }
 
 template<class T>

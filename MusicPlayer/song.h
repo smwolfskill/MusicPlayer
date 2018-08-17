@@ -45,6 +45,18 @@ public:
      */
     static QMediaPlaylist * SongVectorToQMediaPlaylist(const SongVector &songs);
 
+    /**
+     * @brief Compare two Song pointers by their trackNum in ascending order.
+     * @return true, if a's trackNum is before b's.
+     */
+    static bool compareBy_trackNum(const Song * const a, const Song * const b);
+
+    /**
+     * @brief Compare two Song pointers by their title in alphabetical order.
+     * @return true, if a's title is alphabetically before b's.
+     */
+    static bool compareBy_title(const Song * const a, const Song * const b);
+
     Song() {}
     Song(std::string url, std::string title, std::string artist,
          std::string album, std::string genre, unsigned int trackNum, unsigned int year);
@@ -61,7 +73,7 @@ public:
      * @param other Song to compare with.
      * @return true if a's title is alphabetically before b's.
      */
-    bool operator <(const Song & other) const;
+    //bool operator <(const Song & other) const;
 
     std::string toString() const;
 

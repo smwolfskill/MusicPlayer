@@ -82,6 +82,14 @@ void TestVector::testRemoveAt()
 
 void TestVector::testSort()
 {
-    //qInfo("TODO");
-    //QVERIFY(false);
+    //playlist2 should start in ascending order and finish in descending:
+    playlist2->sort(compareDescending);
+    QCOMPARE((*playlist2)[0], song3); //song3 (greatest) moved to front
+    QCOMPARE((*playlist2)[1], song2); //song2 remains in middle
+    QCOMPARE((*playlist2)[2], song1); //song1 (least) moved to back
+}
+
+bool TestVector::compareDescending(int a, int b)
+{
+    return a > b;
 }
