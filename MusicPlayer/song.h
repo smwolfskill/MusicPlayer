@@ -46,16 +46,40 @@ public:
     static QMediaPlaylist * SongVectorToQMediaPlaylist(const SongVector &songs);
 
     /**
-     * @brief Compare two Song pointers by their trackNum in ascending order.
-     * @return true, if a's trackNum is before b's.
-     */
-    static bool compareBy_trackNum(const Song * const a, const Song * const b);
-
-    /**
      * @brief Compare two Song pointers by their title in alphabetical order.
      * @return true, if a's title is alphabetically before b's.
      */
-    static bool compareBy_title(const Song * const a, const Song * const b);
+    static bool compareBy_title(Song * const a, Song * const b);
+
+    /**
+     * @brief Compare two Song pointers by artist.
+     * @return true, if a's artist is alphabetically before b's.
+     */
+    static bool compareBy_artist(Song * const a, Song * const b);
+
+    /**
+     * @brief Compare two Song pointers by album.
+     * @return true, if a's album is alphabetically before b's.
+     */
+    static bool compareBy_album(Song * const a, Song * const b);
+
+    /**
+     * @brief Compare two Song pointers by genre.
+     * @return true, if a's artist is alphabetically before b's.
+     */
+    static bool compareBy_genre(Song * const a, Song * const b);
+
+    /**
+     * @brief Compare two Song pointers by their trackNum in ascending order.
+     * @return true, if a's trackNum is before b's.
+     */
+    static bool compareBy_trackNum(Song * const a, Song * const b);
+
+    /**
+     * @brief Compare two Song pointers chronologically by year released.
+     * @return true, if a was released before b was.
+     */
+    static bool compareBy_year(Song * const a, Song * const b);
 
     Song() {}
     Song(std::string url, std::string title, std::string artist,
@@ -67,13 +91,6 @@ public:
     Song(const std::string representation);
 
     bool Equals(const Song * const other) const;
-
-    /**
-     * @brief For sorting purposes, define a < b if a.title is alphabetically before b.title.
-     * @param other Song to compare with.
-     * @return true if a's title is alphabetically before b's.
-     */
-    //bool operator <(const Song & other) const;
 
     std::string toString() const;
 

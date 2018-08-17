@@ -36,7 +36,13 @@ public:
      * @brief Compare two Albums alphabetically.
      * @return true if a's name is alphabetically before b's.
      */
-    static bool compareBy_name(const Album * const a, const Album * const b);
+    static bool compareBy_name(Album * const a, Album * const b);
+
+    /**
+     * @brief Compare two Albums chronologically by release date.
+     * @return true if a was released before b was.
+     */
+    static bool compareBy_year(Album * const a, Album * const b);
 
     /**
      * @brief Create empty Album with name, release date.
@@ -44,6 +50,11 @@ public:
      * @param released Year released. Default -1 means unknown or N/A.
      */
     Album(const std::string name, int released = -1);
+
+    /**
+     * @brief Sort songs, in chronological order by default (by trackNum).
+     */
+    void sortSongs(bool (*compare)(Song * const, Song * const) = Song::compareBy_trackNum);
 
     //std::string toString() const;
 };

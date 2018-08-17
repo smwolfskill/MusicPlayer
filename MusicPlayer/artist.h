@@ -41,10 +41,15 @@ public:
      * @brief Compare two Artists alphabetically.
      * @return true if a's name is alphabetically before b's.
      */
-    static bool compareBy_name(const Artist * const a, const Artist * const b);
+    static bool compareBy_name(Artist * const a, Artist * const b);
 
     Artist(const std::string name);
     ~Artist();
+
+    /**
+     * @brief Sort albums via a binary comparison function pointer; chronological by default.
+     */
+    void sortAlbums(bool (*compare)(Album * const, Album * const) = Album::compareBy_year);
 
     //std::string toString() const;
 

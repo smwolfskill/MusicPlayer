@@ -13,20 +13,46 @@ QMediaPlaylist * Song::SongVectorToQMediaPlaylist(const SongVector &songs)
     return qPlaylist;
 }
 
-bool Song::compareBy_trackNum(const Song * const a, const Song * const b)
-{
-    if(a->trackNum < b->trackNum) {
-        return true;
-    }
-    return false;
-}
-
-bool Song::compareBy_title(const Song * const a, const Song * const b)
+bool Song::compareBy_title(Song * const a, Song * const b)
 {
     if(strcmp(a->title.c_str(), b->title.c_str()) < 0) {
         return true;
     }
     return false;
+}
+
+bool Song::compareBy_artist(Song * const a, Song * const b)
+{
+    if(strcmp(a->artist.c_str(), b->artist.c_str()) < 0) {
+        return true;
+    }
+    return false;
+}
+
+bool Song::compareBy_album(Song * const a, Song * const b)
+{
+    if(strcmp(a->album.c_str(), b->album.c_str()) < 0) {
+        return true;
+    }
+    return false;
+}
+
+bool Song::compareBy_genre(Song * const a, Song * const b)
+{
+    if(strcmp(a->genre.c_str(), b->genre.c_str()) < 0) {
+        return true;
+    }
+    return false;
+}
+
+bool Song::compareBy_trackNum(Song * const a, Song * const b)
+{
+    return (a->trackNum < b->trackNum);
+}
+
+bool Song::compareBy_year(Song * const a, Song * const b)
+{
+    return (a->year < b->year);
 }
 
 Song::Song(std::string url, std::string name, std::string artist,

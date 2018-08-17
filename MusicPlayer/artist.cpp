@@ -2,7 +2,7 @@
 
 const Artist::ArtistCompare Artist::artistCmp = ArtistCompare();
 
-bool Artist::compareBy_name(const Artist * const a, const Artist * const b)
+bool Artist::compareBy_name(Artist * const a, Artist * const b)
 {
     if(strcmp(a->name.c_str(), b->name.c_str()) < 0) {
         return true;
@@ -22,4 +22,9 @@ Artist::~Artist()
 {
     delete albums[0];
     albums.clear();
+}
+
+void Artist::sortAlbums(bool (*compare)(Album * const, Album * const))
+{
+    albums.sort(compare);
 }

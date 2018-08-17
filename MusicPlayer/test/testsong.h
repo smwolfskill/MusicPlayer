@@ -23,8 +23,12 @@ private slots:
     void cleanup();*/
 
     void testEquals();
-    void testCompareBy_trackNum();
     void testCompareBy_title();
+    void testCompareBy_artist();
+    void testCompareBy_album();
+    void testCompareBy_genre();
+    void testCompareBy_trackNum();
+    void testCompareBy_year();
     void testJson();
 };
 

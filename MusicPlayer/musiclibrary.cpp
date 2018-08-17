@@ -173,10 +173,57 @@ Song * MusicLibrary::getSong(const std::string title) const
     return nullptr;
 }
 
-/*void MusicLibrary::sortLibrary()
+void MusicLibrary::sortLibrary()
 {
+    sortSongs(Song::compareBy_title);
+    sortArtists(Artist::compareBy_name);
+    sortAlbums(Album::compareBy_name);
+    sortGenres(Genre::compareBy_name);
+    sortAlbumSongs();
+    sortArtistAlbums();
+    sortGenreSongs(Song::compareBy_artist);
+}
 
-}*/
+void MusicLibrary::sortSongs(bool (*compare)(Song * const, Song * const))
+{
+    songs.sort(compare);
+}
+
+void MusicLibrary::sortArtists(bool (*compare)(Artist * const, Artist * const))
+{
+    artists.sort(compare);
+}
+
+void MusicLibrary::sortAlbums(bool (*compare)(Album * const, Album * const))
+{
+    albums.sort(compare);
+}
+
+void MusicLibrary::sortGenres(bool (*compare)(Genre * const, Genre * const))
+{
+    genres.sort(compare);
+}
+
+void MusicLibrary::sortArtistAlbums(bool (*compare)(Album * const, Album * const))
+{
+    for(unsigned i = 0; i < artists.size(); i++) {
+        artists[i]->sortAlbums(compare);
+    }
+}
+
+void MusicLibrary::sortAlbumSongs(bool (*compare)(Song * const, Song * const))
+{
+    for(unsigned i = 0; i < albums.size(); i++) {
+        albums[i]->sortSongs(compare);
+    }
+}
+
+void MusicLibrary::sortGenreSongs(bool (*compare)(Song * const, Song * const))
+{
+    for(unsigned i = 0; i < genres.size(); i++) {
+        genres[i]->sortSongs(compare);
+    }
+}
 
 void to_json(nlohmann::json &j, const Vector<Song *> &l)
 {

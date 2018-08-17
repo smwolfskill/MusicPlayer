@@ -58,9 +58,28 @@ public:
     Song * getSong(const std::string title) const; //TODO: outdated; return list of matches.
 
     /**
-     * @brief Sort all relevant interior data structures.
+     * @brief Sort all relevant interior data structures with default sorting settings.
      */
-    //void sortLibrary(); //TODO: don't do this! Ensure that Vec's are sorted as we insert, else slowww.
+    void sortLibrary();
+    void sortSongs(bool (*compare)(Song * const, Song * const));
+    void sortArtists(bool (*compare)(Artist * const, Artist * const));
+    void sortAlbums(bool (*compare)(Album * const, Album * const));
+    void sortGenres(bool (*compare)(Genre * const, Genre * const));
+
+    /**
+     * @brief Sort all Artists' albums by a binary comparison function pointer; chronological by default.
+     */
+    void sortArtistAlbums(bool (*compare)(Album * const, Album * const) = Album::compareBy_year);
+
+    /**
+     * @brief Sort all Albums' songs; by trackNum by default.
+     */
+    void sortAlbumSongs(bool (*compare)(Song * const, Song * const) = Song::compareBy_trackNum);
+
+    /**
+     * @brief Sort all Genres' songs by a binary comparison function pointer.
+     */
+    void sortGenreSongs(bool (*compare)(Song * const, Song * const));
 
     std::string toString() const;
 

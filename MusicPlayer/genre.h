@@ -34,9 +34,14 @@ public:
      * @brief Compare two Genres alphabetically.
      * @return true if a's name is alphabetically before b's.
      */
-    static bool compareBy_name(const Genre * const a, const Genre * const b);
+    static bool compareBy_name(Genre * const a, Genre * const b);
 
     Genre(const std::string name);
+
+    /**
+     * @brief Sort songs via a binary comparison function pointer.
+     */
+    void sortSongs(bool (*compare)(Song * const a, Song * const b));
 
 };
 

@@ -79,7 +79,7 @@ StringVector * Engine::loadAll() {
     for(unsigned i = 1; i < metadata->libraryPaths->size(); i++) { //start after beginning ["filename", ..]
         messages->push_back( loadLibrary((*metadata->libraryPaths)[i]) );
     }
-    //lib->sortLibrary(); //sort updated library
+    library->sortLibrary(); //sort updated library
     return messages;
 }
 
